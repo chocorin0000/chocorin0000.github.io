@@ -36,7 +36,7 @@ nav.top a.l:hover { color: #fff; text-shadow: 0 0 8px var(--g); }
 /* ---- 題名 ---- */
 header.hero { text-align: center; padding: 64px 0 40px; }
 .hero .chou {
-  font-family: var(--ja); font-weight: 900; font-size: clamp(96px, 26vw, 200px); line-height: 1;
+  font-family: var(--ja); font-weight: 900; font-size: clamp(64px, 17.3vw, 133px); line-height: 1;
   color: #eafff1; text-shadow: 0 0 6px var(--g), 0 0 22px var(--g), 0 0 60px rgba(0, 255, 102, .6);
   display: inline-block; animation: flick 6s infinite;
 }
