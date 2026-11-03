@@ -1,0 +1,257 @@
+<!doctype html><html lang='ja'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>家電チェッカー_Android版_v8_使い方マニュアル</title><style>
+body { font-family: "Yu Gothic UI", "Meiryo", "Hiragino Sans", sans-serif; font-size: 10.5pt; line-height: 1.65; color: #222; }
+h1 { font-size: 17pt; border-bottom: 3px solid #2E3A46; padding-bottom: 4px; margin: 0 0 8px; }
+h2 { font-size: 13pt; background: #2E3A46; color: #fff; padding: 4px 10px; margin: 18px 0 8px; break-after: avoid; }
+h3 { font-size: 11.5pt; border-left: 5px solid #2E3A46; padding-left: 8px; margin: 14px 0 6px; break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0; break-inside: avoid; }
+th, td { border: 1px solid #9aa6b2; padding: 5px 8px; vertical-align: top; }
+th { background: #e6ecf2; }
+ul, ol { margin: 4px 0; padding-left: 1.6em; }
+li { margin: 3px 0; }
+hr { border: none; border-top: 1px solid #ccc; margin: 14px 0; }
+a { color: #1d5a96; word-break: break-all; }
+strong, b { color: #000; }
+img { border: 1px solid #bbb; }
+.row { display: flex; gap: 14px; justify-content: center; align-items: flex-start; margin: 8px 0; break-inside: avoid; }
+.fig { text-align: center; font-size: 9pt; color: #555; break-inside: avoid; }
+.fig img { display: block; margin: 0 auto 3px; }
+blockquote { margin: 6px 0; padding: 6px 12px; background: #fff7e0; border-left: 4px solid #e0b040; }
+.note { margin: 10px 0; padding: 8px 12px; background: #e8f4ff; border: 1px solid #8fb8e0; border-radius: 6px; }
+.warn { margin: 10px 0; padding: 8px 12px; background: #fff0f0; border: 1px solid #e0a0a0; border-radius: 6px; }
+code { background: #f1f3f5; padding: 0 3px; font-family: "Consolas", "MS Gothic", monospace; }
+
+body { max-width: 860px; margin: 0 auto; padding: 16px; background: #fff; }
+img { max-width: 100%; height: auto; }
+.row { flex-wrap: wrap; }
+</style></head><body><div style="position:sticky;top:0;z-index:9;background:#000;border-bottom:1px solid #00ff66;padding:8px 12px;margin:-16px -16px 16px;font-family:Consolas,monospace"><a href="../../manual.html" style="color:#00ff66;text-decoration:none">&lt; BACK　マニュアルの一覧へ</a>　<a href="家電チェッカー_Android版_v8_使い方マニュアル.pdf" download style="color:#00ff66;text-decoration:none;float:right">PDF DOWNLOAD</a></div><h1>家電チェッカー Android 版 使い方マニュアル</h1>
+<p>（アプリの版: Android 版 v8　2026-11-03 作成）</p>
+<div class="row">
+<div class="fig"><img src="画像/00_アイコン.png" width="100"><br>ホーム画面のアイコン</div>
+</div>
+
+<p><strong>家電チェッカー</strong>は、家電の<strong>品番のラベルの写真</strong>や<strong>品番</strong>から、</p>
+<ul>
+<li>その家電の<strong>発売日</strong>と、<strong>発売から何年たったか</strong></li>
+<li>メーカーのサイトにある<strong>取扱説明書（PDF）</strong></li>
+</ul>
+<p>を調べる Android のアプリです。</p>
+<ul>
+<li>写真の字は、スマホの中で読み取ります。発売日を探すときに、AI（Google の Gemini）を使えます。</li>
+<li>写真の中のラベルは、説明のために作った見本です。</li>
+</ul>
+<hr />
+<h2>もくじ</h2>
+<ol>
+<li>アプリを入れる</li>
+<li>写真を撮る・選ぶ</li>
+<li>品番を決める</li>
+<li>取扱説明書を見る</li>
+<li>発売日を調べる（AI・価格.com・Google）</li>
+<li>発売日と使った年数</li>
+<li>AI の設定（API キー）</li>
+<li>困ったときは</li>
+</ol>
+<hr />
+<h2>1. アプリを入れる</h2>
+<p>このアプリは Google Play（アプリのお店）には出していません。
+アプリのファイル（<strong>KadenAge_v8.apk</strong>）をスマホに入れて、自分でインストールします。</p>
+<ol>
+<li>APK のファイルを、LINE・メール・Google ドライブなどでスマホに送ります。</li>
+<li>スマホで <strong>KadenAge_v8.apk</strong> をタップします。</li>
+<li>「<strong>このソースからのアプリのインストールは許可されていません</strong>」のような表示が出たら、「<strong>設定</strong>」→「<strong>この提供元のアプリを許可</strong>」を ON にして、前の画面に戻ります。</li>
+<li>「<strong>インストール</strong>」（前の版が入っているときは「<strong>更新</strong>」）を押します。</li>
+<li>「<strong>Play プロテクト</strong>」の注意が出たら、「<strong>詳細</strong>」→「<strong>インストールする</strong>」を選びます。</li>
+<li>ホーム画面に「<strong>家電チェッカー</strong>」のアイコンが出れば完了です。</li>
+</ol>
+<ul>
+<li>くわしくは、別の冊子「<strong>Android スマホにアプリ（APK）を入れる方法（LINE で受け取る）</strong>」を見てください。</li>
+</ul>
+<hr />
+<h2>2. 写真を撮る・選ぶ</h2>
+<div class="row">
+<div class="fig"><img src="画像/01_はじめ.png" width="200"><br>開いたところ</div>
+<div class="fig"><img src="画像/03_写真を選んだ.png" width="200"><br>ラベルの写真を入れたところ</div>
+</div>
+
+<ol>
+<li>「<strong>写真を撮る</strong>」（カメラが開く）または「<strong>写真を選ぶ</strong>」（写真の中から選ぶ）を押します。</li>
+<li>家電の<strong>品番のラベル</strong>を撮ります。
+   - ラベルは、本体の<strong>横・後ろ・扉の内側・底</strong>などに貼ってあります。
+   - <strong>近づいて、字がはっきり読めるように</strong>撮ってください。</li>
+<li>写真が出ると、スマホが写真の中の字を読み取り、品番らしい字に<strong>枠</strong>をつけます（数秒）。
+   - <strong>緑の枠</strong>: 品番として使っている字
+   - <strong>黄色の枠</strong>: ほかの品番の候補</li>
+</ol>
+<h3>写真の操作</h3>
+<table>
+<thead>
+<tr>
+<th>すること</th>
+<th>やり方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>大きくする</td>
+<td>写真の上で <strong>2 本の指を広げる</strong></td>
+</tr>
+<tr>
+<td>向きを直す</td>
+<td>「<strong>↺ 左に回す</strong>」「<strong>↻ 右に回す</strong>」（横向きに撮った写真など）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. 品番を決める</h2>
+<div class="row">
+<div class="fig"><img src="画像/04_写真の下.png" width="200"><br>写真の下（メーカー・品番・製造年）</div>
+</div>
+
+<p>写真の下には、読み取った結果が出ます。</p>
+<table>
+<thead>
+<tr>
+<th>出るもの</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>メーカー</td>
+<td>ラベルから分かったメーカー（例: Panasonic（パナソニック））</td>
+</tr>
+<tr>
+<td>品番（違っていたら直せます）</td>
+<td>調べる品番。<strong>手で直したり、入れたりできます</strong></td>
+</tr>
+<tr>
+<td>候補のボタン</td>
+<td>ほかの品番の候補。押すと、その字が品番の欄に入る</td>
+</tr>
+<tr>
+<td>ラベルに書いてある製造年</td>
+<td>「2014 年製 → 製造から 約 12 年」のように出る</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>品番がちがうときは、写真の中の<strong>ほかの枠をタップ</strong>するか、<strong>候補のボタン</strong>を押します。</li>
+<li><strong>写真がなくても</strong>、品番の欄に品番を入れれば調べられます。</li>
+<li>いちばん下の「<strong>▶ 読み取った文字を全部見る</strong>」で、写真から読めた字を全部見られます。</li>
+</ul>
+<hr />
+<h2>4. 取扱説明書を見る</h2>
+<ol>
+<li>品番が入っている状態で「<strong>取扱説明書を見る</strong>」を押します。</li>
+<li>メーカーのサイトで探して、見つかると <strong>PDF が開きます</strong>。
+   - 説明書が 2 つ以上あるとき（取扱説明書・据付説明書など）は、「<strong>どれを見ますか？</strong>」と聞いてくるので選びます。
+   - 開いた PDF は、PDF を見るアプリの共有のボタンなどで、保存したり送ったりできます。</li>
+<li>戻ると、ボタンの下に「パナソニック　NA-F45B6　全自動洗濯機」「<strong>パナソニックのサイトの発売日: 2012年12月</strong>」のように出ます。発売日の欄が空なら、自動で入ります。</li>
+</ol>
+<div class="row">
+<div class="fig"><img src="画像/06_取扱説明書のあと.png" width="200"><br>取扱説明書を見たあと</div>
+</div>
+
+<h3>直接たどれるメーカー</h3>
+<ul>
+<li><strong>パナソニック・シャープ・日立・東芝・ソニー・象印</strong>は、メーカーのサイトから直接 PDF を探します。</li>
+<li>それ以外のメーカーや、見つからないときは、アプリの中の<strong>探す画面</strong>（Google の検索）が開きます。説明書の <strong>PDF をタップ</strong>すると、すぐ開きます。</li>
+</ul>
+<hr />
+<h2>5. 発売日を調べる（AI・価格.com・Google）</h2>
+<div class="row">
+<div class="fig"><img src="画像/05_AIで調べた.png" width="210"><br>「AI で調べる」のあと</div>
+</div>
+
+<h3>AI で調べる</h3>
+<ol>
+<li>「<strong>AI で調べる</strong>」を押します。</li>
+<li>AI（Gemini）が写真を見て品番やメーカーを読み、<strong>価格.com</strong> で発売日を探します（10 秒くらい）。</li>
+<li>「<strong>2012 年 12 月 発売</strong>」と商品の名前が出て、下の発売日の欄にも自動で入ります。
+   - 「<strong>▶ 価格.com のページで確かめる</strong>」で、価格.com のページが開きます。
+   - 前に調べたことのある品番は、AI に聞かずに覚えている答えを出します（「※ 前に調べた結果です」）。</li>
+</ol>
+<div class="note">
+AI の答えは<b>まちがうこともあります</b>。大事なときは価格.com やメーカーのページで確かめてください。<br>
+AI に聞けるのは<b>1 日 20 回</b>までです（使いすぎ防止。前に調べた品番は数えません）。「今日 AI に聞いた回数」で分かります。
+</div>
+
+<h3>自分で調べる</h3>
+<ul>
+<li>「<strong>価格.com</strong>」: 品番で価格.com を検索します。</li>
+<li>「<strong>Google</strong>」: 品番で Google を検索します。</li>
+</ul>
+<hr />
+<h2>6. 発売日と使った年数</h2>
+<div class="row">
+<div class="fig"><img src="画像/05_AIで調べた.png" width="210"><br>下に「発売から ◯ 年 ◯ か月」</div>
+</div>
+
+<ul>
+<li>発売日の欄（年・月）に発売日が入ると、その下に「<strong>発売から ◯ 年 ◯ か月</strong>」と出ます。</li>
+<li>発売日が分かっているときは、<strong>自分で年と月を入れても</strong>計算します。月が分からないときは、年だけ入れると「発売から 約 ◯ 年」と出ます。</li>
+<li>ラベルに製造年が書いてあれば、「ラベルに書いてある製造年」にも「製造から 約 ◯ 年」と出ます。</li>
+</ul>
+<div class="note">
+家電は、だいたい <b>7〜10 年</b>くらいで買い替えを考える時期といわれます（メーカーが修理用の部品を持っている期間も、製造をやめてから 6〜9 年くらいのものが多いです）。買い替えや修理を考えるときの目安にしてください。
+</div>
+
+<hr />
+<h2>7. AI の設定（API キー）</h2>
+<p>「AI で調べる」を使うには、<strong>Gemini の API キー</strong>を一度だけ入れます。</p>
+<ol>
+<li>パソコンかスマホで <strong>Google AI Studio</strong>（https://aistudio.google.com/）を開き、Google アカウントでログインして、<strong>API キー</strong>を作ります（無料）。</li>
+<li>作ったキーをコピーします。</li>
+<li>アプリの「<strong>AI の設定</strong>」を押します。
+   - 「<strong>キーを作るページ</strong>」を押すと、キーを作るページが開きます。</li>
+<li>入れる欄に API キーを貼り付けて「<strong>保存</strong>」。</li>
+</ol>
+<ul>
+<li>キーは、<strong>このスマホの中だけ</strong>に保存します。画面には、はじめと終わりの 4 文字だけが出ます。</li>
+<li>キーを消したいときは「AI の設定」→「<strong>キーを消す</strong>」。</li>
+<li><strong>API キーは人に教えないでください。</strong></li>
+</ul>
+<hr />
+<h2>8. 困ったときは</h2>
+<table>
+<thead>
+<tr>
+<th>こんなとき</th>
+<th>どうする</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>「品番らしい文字が見つかりませんでした」</td>
+<td>ラベルに近づいて、明るいところで撮り直す。「↺ ↻」で向きを直す。「AI で調べる」で AI に写真を見てもらう</td>
+</tr>
+<tr>
+<td>ちがう字が品番になった</td>
+<td>写真の中のほかの枠をタップする。候補のボタンを押す。品番の欄を手で直す</td>
+</tr>
+<tr>
+<td>「品番を入れてください」</td>
+<td>写真を入れるか、品番の欄に品番を入れる</td>
+</tr>
+<tr>
+<td>「AI で調べる」で API キーの画面が出る</td>
+<td>「7.」で API キーを入れる</td>
+</tr>
+<tr>
+<td>「今日は 20 回使いました。明日また使えます」</td>
+<td>次の日にもう一度。「価格.com」「Google」のボタンで自分で調べる</td>
+</tr>
+<tr>
+<td>発売日が見つからない</td>
+<td>価格.com に出ていない古い家電などです。「取扱説明書を見る」でメーカーの発売日が分かることもあります</td>
+</tr>
+<tr>
+<td>取扱説明書が見つからない</td>
+<td>品番が正しいか確かめる。探す画面（Google の検索）で探す</td>
+</tr>
+<tr>
+<td>「ダウンロードできませんでした」</td>
+<td>電波のよいところで、もう一度押す</td>
+</tr>
+</tbody>
+</table></body></html>

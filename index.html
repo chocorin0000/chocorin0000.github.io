@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>超 APPLICATION - powered by CHOCORIN</title>
+<meta name="description" content="超！手書き・超！アルバム・家電チェッカーの Android 版（APK）と Web 版、使い方マニュアル。">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="icons/ink-android.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="rain" aria-hidden="true"></canvas>
+
+<nav class="top"><div class="in">
+  <a class="logo" href="#"><b>超</b> APPLICATION</a>
+  <a class="l" href="#apps">APPS<small>アプリ</small></a>
+  <a class="l" href="#install">INSTALL<small>入れ方</small></a>
+  <a class="l" href="manual.html">MANUAL<small>マニュアル</small></a>
+</div></nav>
+
+<div class="wrap">
+<header class="hero">
+  <h1 style="margin:0;font-weight:normal">
+    <span class="chou">超</span>
+    <span class="app" style="display:block">APPLICATION</span>
+    <span class="by" style="display:block">powered by <b>CHOCORIN</b></span>
+  </h1>
+  <div class="term" id="typed" data-lines='["SYSTEM ONLINE","ACCESS GRANTED","3 APPLICATIONS FOUND","ようこそ。アプリを選んでください"]'>&gt; SYSTEM ONLINE</div>
+  <p class="lead">手書きメモ・写真のアルバム・家電の年数チェック。<br>
+  3 つのアプリを、<b>Android 版（APK）</b>と <b>Web 版（iPhone・iPad）</b>で無料で使えます。</p>
+</header>
+
+<section id="apps">
+  <h2 class="sec"><span class="en">APPLICATIONS</span><span class="ja">アプリの一覧</span></h2>
+
+  <!-- 超！手書き -->
+  <article class="card">
+    <div class="head">
+      <img src="icons/ink-android.png" alt="超！手書きのアイコン">
+      <div><h3>超！手書き</h3><div class="tag">HANDWRITING MEMO</div></div>
+    </div>
+    <p class="desc">画面いっぱいに大きく書いた字を、小さくして罫線の行に並べる手書きメモです。小さな画面でも、すらすら書けます。</p>
+    <ul class="feat">
+      <li>手書きの字を文字にする（文字の認識）</li>
+      <li>図を描く・形を選んで動かす・塗りつぶし</li>
+      <li>画像・PDF で送る、Google ドライブに自動保存</li>
+    </ul>
+    <div class="ver">
+      <div class="box">
+        <div class="ttl">ANDROID<span>Android 版　v23</span></div>
+        <a class="btn" href="apk/InkMemo_v23.apk" download>DOWNLOAD <small>APK を入れる</small></a>
+        <div class="row"><img class="qr" src="qr/ink-apk.svg" alt="Android 版をダウンロードする QR コード">
+          <div class="qrnote">パソコンで見ているときは、スマホのカメラでこの QR コードを読むと、ダウンロードできます。<br>InkMemo_v23.apk（約 22MB）</div></div>
+      </div>
+      <div class="box">
+        <div class="ttl">WEB APP<span>Web 版（iPhone・iPad）　v10</span></div>
+        <a class="btn" href="https://chocorin0000.github.io/chou-tegaki/" target="_blank" rel="noopener">ACCESS <small>Web 版を開く</small></a>
+        <div class="row"><img class="qr" src="qr/ink-web.svg" alt="Web 版を開く QR コード">
+          <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。</div></div>
+      </div>
+    </div>
+    <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/ink-android/">Android 版のマニュアル</a>
+      <a href="manual/ink-web/">Web 版のマニュアル</a>
+      <a href="manual.html#ink">PDF はこちら</a></div>
+  </article>
+
+  <!-- 超！アルバム -->
+  <article class="card">
+    <div class="head">
+      <img src="icons/album-android.png" alt="超！アルバムのアイコン">
+      <div><h3>超！アルバム</h3><div class="tag">PHOTO ALBUM</div></div>
+    </div>
+    <p class="desc">1 ページに、写真・文字・手書き・線・矢印・日付を、好きな所に自由に置いて作るアルバムです。</p>
+    <ul class="feat">
+      <li>名前をつけたアルバムの中に、ページをいくつでも</li>
+      <li>指でなぞって囲むと、まとめて選んで動かせる</li>
+      <li>画像・PDF で送る、Google ドライブに PDF で自動保存、ファイルでバックアップ</li>
+    </ul>
+    <div class="ver">
+      <div class="box">
+        <div class="ttl">ANDROID<span>Android 版　v17</span></div>
+        <a class="btn" href="apk/FreeAlbum_v17.apk" download>DOWNLOAD <small>APK を入れる</small></a>
+        <div class="row"><img class="qr" src="qr/album-apk.svg" alt="Android 版をダウンロードする QR コード">
+          <div class="qrnote">パソコンで見ているときは、スマホのカメラでこの QR コードを読むと、ダウンロードできます。<br>FreeAlbum_v17.apk（約 0.3MB）</div></div>
+      </div>
+      <div class="box">
+        <div class="ttl">WEB APP<span>Web 版（iPhone・iPad）　v5</span></div>
+        <a class="btn" href="https://chocorin0000.github.io/chou-album/" target="_blank" rel="noopener">ACCESS <small>Web 版を開く</small></a>
+        <div class="row"><img class="qr" src="qr/album-web.svg" alt="Web 版を開く QR コード">
+          <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。</div></div>
+      </div>
+    </div>
+    <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/album-android/">Android 版のマニュアル</a>
+      <a href="manual/album-web/">Web 版のマニュアル</a>
+      <a href="manual.html#album">PDF はこちら</a></div>
+  </article>
+
+  <!-- 家電チェッカー -->
+  <article class="card">
+    <div class="head">
+      <img src="icons/kaden-android.png" alt="家電チェッカーのアイコン">
+      <div><h3>家電チェッカー</h3><div class="tag">APPLIANCE CHECKER</div></div>
+    </div>
+    <p class="desc">家電の品番ラベルを写真に撮るだけで、発売日・使った年数・取扱説明書を調べます。買い替えや修理の目安に。</p>
+    <ul class="feat">
+      <li>写真の中の品番を読み取る</li>
+      <li>AI（Gemini）と価格.com で発売日を調べ、「発売から ◯ 年 ◯ か月」を出す</li>
+      <li>パナソニック・シャープ・日立・東芝・ソニー・象印の取扱説明書（PDF）を直接開く</li>
+    </ul>
+    <div class="ver">
+      <div class="box">
+        <div class="ttl">ANDROID<span>Android 版　v8</span></div>
+        <a class="btn" href="apk/KadenAge_v8.apk" download>DOWNLOAD <small>APK を入れる</small></a>
+        <div class="row"><img class="qr" src="qr/kaden-apk.svg" alt="Android 版をダウンロードする QR コード">
+          <div class="qrnote">パソコンで見ているときは、スマホのカメラでこの QR コードを読むと、ダウンロードできます。<br>KadenAge_v8.apk（約 23MB）<br>AI を使うには Gemini の API キー（無料）が要ります。</div></div>
+      </div>
+      <div class="box">
+        <div class="ttl">WEB APP<span>Web 版（iPhone・iPad）　v1.3</span></div>
+        <a class="btn" href="https://chocorin0000.github.io/kaden-checker/" target="_blank" rel="noopener">ACCESS <small>Web 版を開く</small></a>
+        <div class="row"><img class="qr" src="qr/kaden-web.svg" alt="Web 版を開く QR コード">
+          <div class="qrnote">はじめに、準備した人から教えてもらう URL と合言葉を入れます（マニュアルの 2 章）。</div></div>
+      </div>
+    </div>
+    <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/kaden-android/">Android 版のマニュアル</a>
+      <a href="manual/kaden-web/">Web 版のマニュアル</a>
+      <a href="manual.html#kaden">PDF はこちら</a></div>
+  </article>
+</section>
+
+<section id="install">
+  <h2 class="sec"><span class="en">INSTALL GUIDE</span><span class="ja">アプリの入れ方</span></h2>
+  <div class="steps">
+    <div class="card">
+      <div class="tag">ANDROID / APK</div>
+      <h3>Android スマホ</h3>
+      <ol>
+        <li>上の <b>DOWNLOAD</b> を押す（「ファイルをダウンロードしますか？」には「ダウンロード」）</li>
+        <li>ダウンロードが終わったら「<b>開く</b>」を押す</li>
+        <li>「提供元不明のアプリ」の表示が出たら「<b>設定</b>」→「<b>この提供元のアプリを許可</b>」を ON にして戻る</li>
+        <li>「<b>インストール</b>」（前の版があるときは「<b>更新</b>」）</li>
+        <li>「Play プロテクト」の注意が出たら「<b>詳細</b>」→「<b>インストールする</b>」</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="tag">IPHONE / IPAD</div>
+      <h3>iPhone・iPad</h3>
+      <ol>
+        <li><b>Safari</b> で <b>ACCESS</b> を押して Web 版を開く</li>
+        <li>下（iPad は上）の <b>共有のボタン</b>（□ に ↑）を押す</li>
+        <li>「<b>ホーム画面に追加</b>」→「<b>追加</b>」</li>
+        <li>ホーム画面のアイコンから開くと、全画面で使えます</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="tag">WEB / ANDROID</div>
+      <h3>Android で Web 版</h3>
+      <ol>
+        <li><b>Chrome</b> で <b>ACCESS</b> を押して Web 版を開く</li>
+        <li>右上の「<b>︙</b>」を押す</li>
+        <li>「<b>ホーム画面に追加</b>」→「<b>インストール</b>」</li>
+      </ol>
+      <p class="note">Android では、ふつうは APK 版のほうが便利です。</p>
+    </div>
+  </div>
+  <div class="warn">
+    APK のアプリは Google Play（アプリのお店）には出していないので、入れるときに注意の表示が出ます。このページからダウンロードしたものなら、そのまま進めてください。<br>
+    データはスマホ（ブラウザ）の中に保存されます。大事なメモやアルバムは、ときどきバックアップを取ってください（マニュアルの「バックアップ」の章）。
+  </div>
+</section>
+
+<section id="manual">
+  <h2 class="sec"><span class="en">MANUAL</span><span class="ja">使い方マニュアル</span></h2>
+  <div class="card">
+    <p style="margin-top:0">6 冊のマニュアル（3 つのアプリ × Android 版・Web 版）があります。<br>
+    <b>VIEW</b> はダウンロードせずにこの場で読む（HTML）、<b>PDF</b> はファイルでダウンロードして保存・印刷できます。</p>
+    <a class="btn" href="manual.html">ENTER <small>マニュアルの一覧へ</small></a>
+  </div>
+</section>
+
+<section id="share">
+  <h2 class="sec"><span class="en">SHARE</span><span class="ja">このページを教える</span></h2>
+  <div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+    <img src="qr/home.svg" alt="このページの QR コード" style="width:120px;height:120px;image-rendering:pixelated">
+    <div>このページの QR コードです。スマホのカメラで読むと、このページが開きます。<br>
+      <span class="en" style="color:var(--g)">https://chocorin0000.github.io/</span></div>
+  </div>
+</section>
+
+<footer>
+  <div>超 APPLICATION // powered by CHOCORIN</div>
+  <div>END OF TRANSMISSION</div>
+  <div class="ja">© 2026 CHOCORIN</div>
+</footer>
+</div>
+<script src="matrix.js"></script>
+</body>
+</html>
