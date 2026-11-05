@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>超 APPLICATION - powered by CHOCORIN</title>
-<meta name="description" content="超！手書き・超！アルバム・家電チェッカー・超！付箋電卓の Android 版（APK）と Web 版、使い方マニュアル。">
+<meta name="description" content="超！声でスケジュール・超！手書き・超！アルバム・家電チェッカー・超！付箋電卓の Android 版（APK）と Web 版、使い方マニュアル。">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="icons/ink-android.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <canvas id="rain" aria-hidden="true"></canvas>
@@ -29,13 +29,50 @@
     <span class="app" style="display:block">APPLICATION</span>
     <span class="by" style="display:block">powered by <b>CHOCORIN</b></span>
   </h1>
-  <div class="term" id="typed" data-lines='["SYSTEM ONLINE","ACCESS GRANTED","4 APPLICATIONS FOUND","ようこそ。アプリを選んでください"]'>&gt; SYSTEM ONLINE</div>
-  <p class="lead">手書きメモ・写真のアルバム・家電の年数チェック・付箋電卓。<br>
-  4 つのアプリを、<b>Android 版（APK）</b>と <b>Web 版（iPhone・iPad）</b>で無料で使えます。</p>
+  <div class="term" id="typed" data-lines='["SYSTEM ONLINE","ACCESS GRANTED","5 APPLICATIONS FOUND","ようこそ。アプリを選んでください"]'>&gt; SYSTEM ONLINE</div>
+  <p class="lead">声で入れる予定・手書きメモ・写真のアルバム・家電の年数チェック・付箋電卓。<br>
+  5 つのアプリを、<b>Android 版（APK）</b>と <b>Web 版（iPhone・iPad）</b>で無料で使えます。</p>
 </header>
 
 <section id="apps">
   <h2 class="sec"><span class="en">APPLICATIONS</span><span class="ja">アプリの一覧</span></h2>
+
+  <!-- 超！声でスケジュール -->
+  <article class="card" id="voice">
+    <div class="head">
+      <img src="icons/voice-android.png" alt="超！声でスケジュールのアイコン">
+      <div><h3>超！声でスケジュール</h3><div class="tag">VOICE SCHEDULE</div></div>
+    </div>
+    <p class="desc"><b>とにかくシンプルな入力項目で、ちゃちゃっと予定を登録。</b>声の案内に答えるだけで、Google カレンダーや iPhone のカレンダーに予定が入ります。</p>
+    <ul class="feat">
+      <li>聞かれるのはタイトル・日時・説明の 3 つだけ</li>
+      <li>「来週の水曜の午後3時」のような言い方を、そのまま日付に直す</li>
+      <li>直したいときは、項目ごとに声で言い直せる</li>
+    </ul>
+    <div class="vidbox">
+      <div class="k">INTRO VIDEO<span>紹介動画（約 1 分・音が出ます）</span></div>
+      <video class="vid" controls playsinline preload="none" poster="video/voice-intro.jpg" src="video/voice-intro.mp4"></video>
+    </div>
+    <div class="ver">
+      <div class="box">
+        <div class="ttl">ANDROID<span>Android 版　v8</span></div>
+        <a class="btn" href="apk/VoiceSched_v8.apk" download>DOWNLOAD <small>APK を入れる</small></a>
+        <div class="row"><img class="qr" src="qr/voice-apk.svg" alt="Android 版をダウンロードする QR コード">
+          <div class="qrnote">パソコンで見ているときは、スマホのカメラでこの QR コードを読むと、ダウンロードできます。<br>VoiceSched_v8.apk（約 0.1MB）</div></div>
+      </div>
+      <div class="box">
+        <div class="ttl">WEB APP<span>Web 版（iPhone・iPad）　v18</span></div>
+        <a class="btn" href="https://chocorin0000.github.io/chou-onsei/" target="_blank" rel="noopener">ACCESS <small>Web 版を開く</small></a>
+        <div class="row"><img class="qr" src="qr/voice-web.svg" alt="Web 版を開く QR コード">
+          <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。</div></div>
+      </div>
+    </div>
+    <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/voice-android/">Android 版のマニュアル</a>
+      <a href="manual/voice-web/">Web 版のマニュアル</a>
+      <a href="manual/apk-install/">APK の入れ方</a>
+      <a href="manual.html#voice">PDF はこちら</a></div>
+  </article>
 
   <!-- 超！手書き -->
   <article class="card">
@@ -179,6 +216,7 @@
         <li>「<b>インストール</b>」（前の版があるときは「<b>更新</b>」）</li>
         <li>「Play プロテクト」の注意が出たら「<b>詳細</b>」→「<b>インストールする</b>」</li>
       </ol>
+      <p class="note">写真つきの説明: <a href="manual/apk-install/">APK の入れ方</a>（<a href="manual.html#apk">PDF</a>）</p>
     </div>
     <div class="card">
       <div class="tag">IPHONE / IPAD</div>
@@ -210,7 +248,7 @@
 <section id="manual">
   <h2 class="sec"><span class="en">MANUAL</span><span class="ja">使い方マニュアル</span></h2>
   <div class="card">
-    <p style="margin-top:0">8 冊のマニュアル（4 つのアプリ × Android 版・Web 版）があります。<br>
+    <p style="margin-top:0">11 冊のマニュアル（5 つのアプリ × Android 版・Web 版と、APK の入れ方）があります。<br>
     <b>VIEW</b> はダウンロードせずにこの場で読む（HTML）、<b>PDF</b> はファイルでダウンロードして保存・印刷できます。</p>
     <a class="btn" href="manual.html">ENTER <small>マニュアルの一覧へ</small></a>
   </div>
