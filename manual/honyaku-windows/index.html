@@ -1,0 +1,257 @@
+<!doctype html><html lang='ja'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>超！画面翻訳_v3_使い方マニュアル</title><style>
+body { font-family: "Yu Gothic UI", "Meiryo", sans-serif; font-size: 10.5pt; line-height: 1.65; color: #222; max-width: 860px; margin: 0 auto; padding: 16px; background: #fff; }
+h1 { font-size: 17pt; border-bottom: 3px solid #2E3A46; padding-bottom: 4px; margin: 0 0 8px; }
+h2 { font-size: 13pt; background: #2E3A46; color: #fff; padding: 4px 10px; margin: 18px 0 8px; break-after: avoid; }
+h3 { font-size: 11.5pt; border-left: 5px solid #2E3A46; padding-left: 8px; margin: 14px 0 6px; break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 6px 0; break-inside: avoid; }
+th, td { border: 1px solid #9aa6b2; padding: 5px 8px; vertical-align: top; text-align: left; }
+th { background: #e6ecf2; }
+ul, ol { margin: 4px 0; padding-left: 1.6em; }
+li { margin: 3px 0; }
+hr { border: none; border-top: 1px solid #ccc; margin: 14px 0; }
+a { color: #1d5a96; word-break: break-all; }
+strong { color: #000; }
+img { border: 1px solid #bbb; max-width: 100%; height: auto; }
+.fig { text-align: center; font-size: 9pt; color: #555; break-inside: avoid; margin: 10px 0; }
+.fig img { display: block; margin: 0 auto 3px; }
+.note { margin: 10px 0; padding: 8px 12px; background: #e8f4ff; border: 1px solid #8fb8e0; border-radius: 6px; break-inside: avoid; }
+.warn { margin: 10px 0; padding: 8px 12px; background: #fff0f0; border: 1px solid #e0a0a0; border-radius: 6px; break-inside: avoid; }
+code { background: #f1f3f5; padding: 0 3px; font-family: "Consolas", "MS Gothic", monospace; }
+@media print { h2.newpage { break-before: page; } }
+</style></head><body>
+<h1>超！画面翻訳 使い方マニュアル</h1>
+<p>（ソフトの版: v3　2026-11-06 作成）</p>
+<div class="fig"><img src="画像/00_アイコン.png" width="80"><br>ソフトのアイコン</div>
+<p><strong>超！画面翻訳</strong>は、Windows の画面に出ている文字を<strong>マウスで四角く囲むだけで日本語に訳す</strong>ソフトです。Claude Code の画面に出る英語のメッセージを読むために作りました。ブラウザや PDF など、ほかのソフトの画面でも囲めます。</p>
+<hr>
+<h2>もくじ</h2>
+<ol>
+<li>インストールする（準備するもの）</li>
+<li>翻訳する（ふだんの使い方）</li>
+<li>常駐させて使う</li>
+<li>ソフトにキーを入れる</li>
+<li>Google のサイトでキーを新しく作る</li>
+<li>前に作ったキーを探す</li>
+<li>翻訳の履歴を見る</li>
+<li>アンインストールする</li>
+<li>気をつけること</li>
+<li>困ったときは</li>
+</ol>
+
+<h2>1. インストールする（準備するもの）</h2>
+<h3>インストールの手順</h3>
+<ol>
+<li><strong><code>超！画面翻訳_セットアップ_v3.exe</code></strong> をダブルクリックします。</li>
+<li>窓が開いたら、<strong>「インストール」</strong>を押します。管理者の許可を求める画面は出ません。</li>
+<li>終わりの窓が出たら、<strong>「閉じる」</strong>か<strong>「起動する」</strong>を押します。</li>
+</ol>
+<div class="fig"><img src="画像/06_インストールの窓.png" width="430"><br>インストールの窓</div>
+<div class="fig"><img src="画像/07_インストール完了の窓.png" width="430"><br>インストールが終わった窓</div>
+<div class="note">前の版が入っているときは、もう一度インストールするだけで置き換わります。<strong>履歴と Gemini のキーはそのまま残ります。</strong>ソフトが動いていたら、終了してよいか確かめる窓が出ます。</div>
+<div class="warn">インターネットなどから受け取ったセットアップを開くと、<strong>「Windows によって PC が保護されました」</strong>と出ることがあります。信頼できる所から受け取ったものなら、<strong>「詳細情報」</strong>を押してから<strong>「実行」</strong>を押します。</div>
+<h3>インストールされる場所</h3>
+<table>
+<tr><th>もの</th><th>場所</th></tr>
+<tr><td>ソフト本体とこのマニュアル</td><td><code>%LOCALAPPDATA%\Programs\ChouHonyaku</code><br>（ふつうは <code>C:\Users\ユーザー名\AppData\Local\Programs\ChouHonyaku</code>）</td></tr>
+<tr><td>起動するアイコン</td><td>デスクトップ（チェックを入れたとき）とスタートメニューの「超！画面翻訳」</td></tr>
+<tr><td>履歴・キー・設定</td><td><code>%APPDATA%\ChouHonyaku</code>（7 章）</td></tr>
+</table>
+<p>パソコンのこのユーザーだけが使う場所なので、管理者の許可がいりません。同じパソコンの別の Windows ユーザーで使うときは、そのユーザーでもインストールします。</p>
+<h3>準備するもの</h3>
+<ul>
+<li><strong>Windows 10 / 11:</strong> このソフトは Windows に入っている .NET Framework 4 で動きます。追加のインストールはいりません。</li>
+<li><strong>インターネット:</strong> 翻訳のときに使います。</li>
+<li><strong>Gemini のキー:</strong> Google の AI「Gemini」を使うための、長い文字列です。作り方は 5 章、前に作ったキーの探し方は 6 章にあります。</li>
+</ul>
+
+<h2>2. 翻訳する（ふだんの使い方）</h2>
+<ol>
+<li>デスクトップかスタートメニューの<strong>「超！画面翻訳」</strong>を開きます。</li>
+<li>画面全体が少し暗くなります。</li>
+<li>訳したい所を、マウスの左ボタンを押したままなぞって<strong>四角く囲み</strong>、ボタンを離します。</li>
+<li>数秒で、囲んだ所の近くに窓が出ます。上が<strong>日本語訳</strong>、下が<strong>読み取った文字（原文）</strong>です。訳せたものは、自動で履歴に保存されます（7 章）。</li>
+</ol>
+<div class="fig"><img src="画像/01_囲む画面.png" width="600"><br>囲む画面（説明用に作ったイメージ）</div>
+<div class="fig"><img src="画像/02_翻訳の窓.png" width="480"><br>翻訳の窓（文章は見本）</div>
+<table>
+<tr><th>窓のボタン</th><th>はたらき</th></tr>
+<tr><td>もう一度囲む</td><td>別の所を囲みます</td></tr>
+<tr><td>訳をコピー</td><td>日本語訳をコピーします</td></tr>
+<tr><td>履歴</td><td>これまでの翻訳を見ます（7 章）</td></tr>
+<tr><td>キーの設定</td><td>Gemini のキーを入れ直します</td></tr>
+<tr><td>閉じる</td><td>窓を閉じます（Esc キーでも閉じます）。常駐していなければ、ソフトも終わります</td></tr>
+<tr><td>常駐する</td><td>3 章を見てください</td></tr>
+</table>
+<p>囲むのをやめるときは、<strong>Esc キーか右クリック</strong>です。</p>
+
+<h2>3. 常駐させて使う</h2>
+<p>「常駐」は、ソフトを動かしたまま画面右下に待機させることです。何度も翻訳するときに便利です。</p>
+<h3>始め方</h3>
+<ol>
+<li>一度翻訳して窓を出します。</li>
+<li>窓の下の<strong>「常駐する」にチェック</strong>を入れます。</li>
+<li>窓を閉じても、画面右下の時計の近くに<strong>黒地に白い「訳」のアイコン</strong>が残ります。</li>
+</ol>
+<div class="note">アイコンが見えないときは、時計の左にある <strong>「^」</strong> を押してください。隠れているアイコンの一覧が開きます。</div>
+<h3>常駐中に翻訳する</h3>
+<ul>
+<li>キーボードの <strong>Ctrl + Alt + T</strong> を同時に押す</li>
+<li>または、「訳」のアイコンをクリックする</li>
+<li>または、ショートカットをもう一度開く</li>
+</ul>
+<h3>アイコンの右クリックメニュー</h3>
+<div class="fig"><img src="画像/04_右クリックメニュー.png" width="300"><br>右クリックメニュー（説明用に作ったイメージ）</div>
+<table>
+<tr><th>メニュー</th><th>はたらき</th></tr>
+<tr><td>四角く囲んで翻訳</td><td>囲む画面を出します</td></tr>
+<tr><td>履歴を見る</td><td>これまでの翻訳を見ます（7 章）</td></tr>
+<tr><td>Gemini のキーの設定</td><td>キーの入力窓を開きます</td></tr>
+<tr><td>Windows の起動時に常駐する</td><td>押すたびに ON / OFF が変わります。ON にすると、パソコンを起動したとき自動で常駐します。初めは OFF です</td></tr>
+<tr><td>常駐をやめて終了</td><td>ソフトを終わります。次からは常駐しない使い方に戻ります</td></tr>
+</table>
+<div class="warn">デスクトップのショートカットを右クリックしても、このメニューは出ません。<strong>画面右下の「訳」のアイコン</strong>を右クリックしてください。</div>
+
+<h2>4. ソフトにキーを入れる</h2>
+<p>キーが入っていないソフトを起動すると、最初に入力窓が出ます。</p>
+<div class="fig"><img src="画像/03_キーの窓.png" width="430"><br>キーの入力窓</div>
+<h3>今すぐ入れる</h3>
+<ol>
+<li>Google のサイトでキーをコピーします（5 章・6 章）。</li>
+<li>入力窓の欄を右クリックして「貼り付け」を選びます（Ctrl + V でも貼り付けられます）。入れた文字は伏せ字になります。</li>
+<li><strong>「保存」</strong>を押します。すぐ囲む画面になります。</li>
+</ol>
+<h3>今は入れず、あとで入れる</h3>
+<ol>
+<li>入力窓で<strong>「やめる」</strong>を押します。ソフトは終わらず、画面右下に「訳」のアイコンが残ります。</li>
+<li>入れたくなったら、アイコンを右クリックして<strong>「Gemini のキーの設定」</strong>を選びます。</li>
+<li>貼り付けて「保存」を押します。これで Ctrl + Alt + T やアイコンのクリックで囲めます。</li>
+</ol>
+<p>このとき常駐の設定は変わりません。「常駐をやめて終了」で閉じれば、次もふつうに起動します。</p>
+<h3>キーを入れ直す</h3>
+<ul>
+<li>翻訳の窓の<strong>「キーの設定」</strong>ボタン</li>
+<li>常駐中のアイコンの右クリックメニュー<strong>「Gemini のキーの設定」</strong></li>
+</ul>
+<div class="note">キーは <code>ChouHonyaku.exe</code> の中には入りません。パソコンの中（<code>%APPDATA%\ChouHonyaku\</code>）に暗号化して保存します。そのため、別のパソコンで使うときは、キーを入れ直します。</div>
+
+<h2>5. Google のサイトでキーを新しく作る</h2>
+<p>Google の「<strong>Google AI Studio</strong>」というサイトで作ります。Google アカウントが必要です。</p>
+<ol>
+<li>ブラウザで次のページを開きます。入力窓の青い文字のリンクからも開けます。<br><a href="https://aistudio.google.com/apikey">https://aistudio.google.com/apikey</a></li>
+<li>求められたら、Google アカウントでログインします。</li>
+<li>初めて使うときは、利用規約の画面が出ます。読んで同意します。</li>
+<li><strong>API Keys</strong>（API キー）のページで、<strong>「Create API key」</strong>（API キーを作る）を押します。</li>
+<li>プロジェクトを選ぶように求められたら、一覧にあるものを選びます。</li>
+<li>できたキーを<strong>コピー</strong>します。</li>
+<li>4 章の手順で、ソフトに貼り付けます。</li>
+</ol>
+<div class="note">画面が英語のときは、このソフトで囲むと訳せます。Google のページの作りや言葉は変わることがあります。このマニュアルは 2026-11-04 時点の Google の説明をもとにしており、手順の画面は撮っていません。</div>
+<div class="warn"><strong>「You do not have permission to create a key in this project.」</strong>と出て作れないときは、そのプロジェクトでキーを作る権限がありません。会社や学校のアカウントなら管理者に相談するか、ふだん使いの Google アカウントで試してください。</div>
+
+<h2>6. 前に作ったキーを探す</h2>
+<h3>方法 1: Google のサイトで探す</h3>
+<ol>
+<li><a href="https://aistudio.google.com/apikey">https://aistudio.google.com/apikey</a> を開きます。</li>
+<li><strong>キーを作ったときと同じ Google アカウント</strong>でログインします。右上のアカウントの絵で確かめられます。</li>
+<li><strong>API Keys</strong> のページに、キーの一覧が出ます。</li>
+<li>使いたいキーの行を開き、キーが表示されたら<strong>コピー</strong>します。</li>
+<li>4 章の手順で、ソフトに貼り付けます。</li>
+</ol>
+<table>
+<tr><th>こんなとき</th><th>どうするか</th></tr>
+<tr><td>一覧に何も出ない</td><td>別の Google アカウントで作ったのかもしれません。アカウントを替えて見てください</td></tr>
+<tr><td>Google Cloud のプロジェクトで作ったキーが出ない</td><td><strong>Dashboard → Projects → Import projects</strong> で、そのプロジェクトを取り込みます</td></tr>
+<tr><td>キーの全部が見られない・コピーできない</td><td>新しく作ります（5 章）。キーをもう一度全部見られるかどうかは、Google の説明に書かれていません</td></tr>
+<tr><td><strong>Blocked</strong> の札が付いている</td><td>長く使っていないため止められたキーです。新しく作ります（5 章）</td></tr>
+</table>
+<h3>方法 2: Google Apps Script（GAS）に入れたキーを見る</h3>
+<p>超！手書きなどの GAS に <code>GEMINI_KEY</code> としてキーを入れた場合は、そこで確かめられます。</p>
+<ol>
+<li><a href="https://script.google.com/">https://script.google.com/</a> を開き、そのスクリプトを開きます。</li>
+<li>左の歯車の絵（プロジェクトの設定）を押します。</li>
+<li>下のほうの<strong>スクリプト プロパティ</strong>で、<code>GEMINI_KEY</code> の値を見ます。</li>
+</ol>
+<h3>どのキーか見分ける: 家電チェッカー</h3>
+<p>Android 版の家電チェッカーの「AI（Gemini）の設定」には、キーの<strong>最初と最後の 4 文字だけ</strong>が出ます。全部は見られないのでコピーには使えませんが、キーが何本もあるとき、どれが使っているキーかを見比べる手がかりになります。</p>
+<h3>見つからないときは</h3>
+<p>新しく作るのが一番簡単です（5 章）。新しいキーを作っても、前のキーを自分で削除しなければ、前のキーが消えることはありません。</p>
+
+<h2>7. 翻訳の履歴を見る</h2>
+<p>訳せたものは、<strong>日本語訳・原文・西暦の日付と時間</strong>を自動で保存します。日時は、画面を囲んだときのものです。翻訳の窓の見出しに、保存した日時が出ます。</p>
+<p>エラーになったときと、訳が届く前に窓を閉じたときは保存しません。</p>
+<h3>履歴の窓を開く</h3>
+<ul>
+<li>翻訳の窓の<strong>「履歴」</strong>ボタン</li>
+<li>常駐中のアイコンの右クリックメニュー<strong>「履歴を見る」</strong></li>
+</ul>
+<div class="fig"><img src="画像/05_履歴の窓.png" width="560"><br>履歴の窓（文章は見本）</div>
+<table>
+<tr><th>窓の部品</th><th>はたらき</th></tr>
+<tr><td>左の一覧</td><td>新しい順に、日時と訳の出だしが並びます。押すと右に中身が出ます</td></tr>
+<tr><td>検索</td><td>日時・訳・原文から探します。「2026-11-06」と入れると、その日のものだけになります</td></tr>
+<tr><td>訳をコピー／原文をコピー</td><td>選んだものの訳か原文をコピーします</td></tr>
+<tr><td>この記録を消す</td><td>選んだ 1 件を消します。元に戻せません</td></tr>
+<tr><td>テキストに書き出す</td><td>一覧に出ているものを、1 つのテキストファイルに保存します。検索中は、見つかったものだけです</td></tr>
+</table>
+<h3>履歴の保存場所</h3>
+<p>履歴は、ソフト本体とは別のファイルに保存しています。</p>
+<p><code>%APPDATA%\ChouHonyaku\history.jsonl</code><br>（ふつうは <code>C:\Users\ユーザー名\AppData\Roaming\ChouHonyaku\history.jsonl</code>）</p>
+<ol>
+<li>エクスプローラーを開きます。</li>
+<li>上のアドレス欄に <code>%APPDATA%\ChouHonyaku</code> と入れて、Enter キーを押します。</li>
+<li>フォルダが開きます。1 件目を保存するまでは、<code>history.jsonl</code> はありません。</li>
+</ol>
+<ul>
+<li><strong>残したいとき:</strong> このファイルを別の場所にコピーします。Windows を入れ直したり、パソコンを替えたりすると、自動では引き継がれません。</li>
+<li><strong>別のパソコンへ移すとき:</strong> ソフトを一度閉じてから、移したいパソコンの同じ場所にファイルを置きます（そこにある履歴は置き換わります）。</li>
+<li><strong>読むとき:</strong> 1 行に 1 件の JSON という形で、メモ帳では読みにくいです。履歴の窓か、書き出したテキストファイルで読みます。</li>
+<li><strong>直接書き換えない:</strong> 行が壊れると、その記録は窓に出なくなります。消すときは「この記録を消す」を使います。</li>
+</ul>
+
+<h2>8. アンインストールする</h2>
+<h3>始め方（どちらでも同じです）</h3>
+<ul>
+<li>スタートメニューの<strong>「超！画面翻訳 のアンインストール」</strong></li>
+<li>Windows の<strong>設定 → アプリ → インストールされているアプリ</strong>で「超！画面翻訳」の<strong>「…」→「アンインストール」</strong></li>
+</ul>
+<div class="fig"><img src="画像/08_アンインストールの窓.png" width="430"><br>アンインストールの窓</div>
+<h3>窓で選ぶこと</h3>
+<table>
+<tr><th>選ぶもの</th><th>はたらき</th></tr>
+<tr><td>履歴を残す（初めはこちら）</td><td>履歴のファイルを残します。もう一度インストールすると、また見られます</td></tr>
+<tr><td>履歴を消す</td><td>履歴のファイルを消します。確かめる窓で「はい」を押すと消えます。<strong>元に戻せません</strong></td></tr>
+<tr><td>Gemini のキーも、このパソコンから消す</td><td>初めはチェックが入っています。外すとキーが残り、入れ直したときにそのまま使えます。消しても Google のサイトのキーは消えません</td></tr>
+</table>
+<p><strong>「アンインストール」</strong>を押すと、ソフトが動いていれば終了してよいか確かめてから消します。</p>
+<h3>消えるもの・残るもの</h3>
+<table>
+<tr><th>消えるもの</th><th>ソフト本体、このマニュアル、スタートメニューとデスクトップのアイコン、Windows の起動時の常駐、常駐の設定</th></tr>
+<tr><th>選んだときだけ消えるもの</th><td>履歴、Gemini のキー</td></tr>
+<tr><th>残るもの</th><td>「テキストに書き出す」で保存したファイル、自分で別の場所にコピーした exe やそのショートカット</td></tr>
+</table>
+
+<h2>9. 気をつけること</h2>
+<div class="warn"><strong>囲んだ部分は、画像のまま Google に送られます。</strong>パスワード、銀行の画面、個人情報が映っている部分は囲まないでください。無料版では、送った内容が Google のサービス改善に使われることがあります。囲まなかった部分は送られません。</div>
+<ul>
+<li><strong>履歴は暗号化していない:</strong> 訳した文字が、そのままパソコンに残ります。人に見られたくない内容を訳したら、その記録を消してください。</li>
+<li><strong>キーは人に見せない:</strong> パスワードと同じように扱います。他人に使われると、回数を消費されてしまいます。</li>
+<li><strong>パソコンの共有に注意:</strong> 同じ Windows ユーザーで動くソフトなら、保存したキーを読み出せます。パソコンを人に貸すときや、怪しいソフトを動かすときは気をつけてください。</li>
+<li><strong>訳は間違うことがある:</strong> 訳の言い回しは毎回少し変わります。大事な確認の画面では、選ぶ前に原文の番号も見てください。</li>
+<li><strong>無料の回数:</strong> 使いすぎると、しばらく翻訳できなくなります。同じキーを使うほかのアプリとも回数を共有することがあります。</li>
+</ul>
+
+<h2>10. 困ったときは</h2>
+<table>
+<tr><th>こんなとき</th><th>どうするか</th></tr>
+<tr><td>「Gemini のキーが使えませんでした」と出る</td><td>キーが間違っているか、止められています。コピーし直して入れるか、新しく作ってください</td></tr>
+<tr><td>「無料の回数を使い切ったようです」と出る</td><td>少し待ってから試してください</td></tr>
+<tr><td>「Gemini が混んでいます」と出る</td><td>少し待ってから試してください</td></tr>
+<tr><td>「インターネットにつながりませんでした」と出る</td><td>インターネットの接続を確かめてください</td></tr>
+<tr><td>「Gemini からエラーが返りました」と出る</td><td>正しいキーでも続くときは、ソフトが使う Gemini のモデルが終わった可能性があります。ソフトを直す必要があります</td></tr>
+<tr><td>Ctrl + Alt + T が効かない</td><td>ほかのソフトが同じキーを使っているか、管理者権限のソフトを操作中かもしれません。「訳」のアイコンをクリックしてください</td></tr>
+<tr><td>黒く写って読めない</td><td>動画配信など、コピー防止のある画面は読めないことがあります</td></tr>
+<tr><td>メニューを出して囲もうとすると消える</td><td>先にメニューを出してから Ctrl + Alt + T を押してみてください（常駐中のみ）。それでも消える画面は囲めません</td></tr>
+<tr><td>ソフトを消したい</td><td>8 章の手順でアンインストールします</td></tr>
+<tr><td>履歴に保存できないと出る</td><td>翻訳の窓の見出しに「履歴に保存できませんでした」と出たときは、その 1 件は残っていません。必要なら「訳をコピー」で控えます。空き容量や、7 章のフォルダを確かめてください</td></tr>
+</table>
+</body></html>

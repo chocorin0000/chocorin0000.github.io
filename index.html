@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>超 APPLICATION - powered by CHOCORIN</title>
-<meta name="description" content="超！声でスケジュール・超！手書き・超！アルバム・家電チェッカー・超！付箋電卓の Android 版（APK）と Web 版、使い方マニュアル。">
+<meta name="description" content="超！声でスケジュール・超！付箋電卓・超！手書き・超！アルバム・家電チェッカーの Android 版（APK）と Web 版、超！画面翻訳の Windows 版、使い方マニュアル。">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="icons/ink-android.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,9 +29,9 @@
     <span class="app" style="display:block">APPLICATION</span>
     <span class="by" style="display:block">powered by <b>CHOCORIN</b></span>
   </h1>
-  <div class="term" id="typed" data-lines='["SYSTEM ONLINE","ACCESS GRANTED","5 APPLICATIONS FOUND","ようこそ。アプリを選んでください"]'>&gt; SYSTEM ONLINE</div>
-  <p class="lead">声で入れる予定・手書きメモ・写真のアルバム・家電の年数チェック・付箋電卓。<br>
-  5 つのアプリを、<b>Android 版（APK）</b>と <b>Web 版（iPhone・iPad）</b>で無料で使えます。</p>
+  <div class="term" id="typed" data-lines='["SYSTEM ONLINE","ACCESS GRANTED","6 APPLICATIONS FOUND","ようこそ。アプリを選んでください"]'>&gt; SYSTEM ONLINE</div>
+  <p class="lead">声で入れる予定・付箋電卓・手書きメモ・写真のアルバム・家電の年数チェック・画面の翻訳。<br>
+  6 つのアプリを、<b>Android 版（APK）</b>と <b>Web 版（iPhone・iPad）</b>、<b>Windows 版</b>で無料で使えます。</p>
 </header>
 
 <section id="apps">
@@ -73,6 +73,38 @@
       <a href="manual/voice-web/">Web 版のマニュアル</a>
       <a href="manual/apk-install/">APK の入れ方</a>
       <a href="manual.html#voice">PDF はこちら</a></div>
+  </article>
+
+  <!-- 超！付箋電卓 -->
+  <article class="card">
+    <div class="head">
+      <img src="icons/fusen-android.png" alt="超！付箋電卓のアイコン">
+      <div><h3>超！付箋電卓</h3><div class="tag">STICKY NOTE CALCULATOR</div></div>
+    </div>
+    <p class="desc">計算した数字を付箋にして貼っておき、あとで足したり計算に使ったりできる電卓です。広告は出ません。</p>
+    <ul class="feat">
+      <li>数字の欄を上に引っぱると付箋に。付箋を欄へ戻すと計算に使える。付箋の計算式もあとで見られる</li>
+      <li>タップで選んだ付箋だけを合計、2 本指でキャンバスを動かして何枚でも</li>
+      <li>消費税（10%・8%）の税込・税抜、円・ドル・ユーロをその日のレートで</li>
+    </ul>
+    <div class="ver">
+      <div class="box">
+        <div class="ttl">ANDROID<span>Android 版　v5</span></div>
+        <a class="btn" href="apk/FusenCalc_v5.apk" download>DOWNLOAD <small>APK を入れる</small></a>
+        <div class="row"><img class="qr" src="qr/fusen-apk.svg" alt="Android 版をダウンロードする QR コード">
+          <div class="qrnote">パソコンで見ているときは、スマホのカメラでこの QR コードを読むと、ダウンロードできます。<br>FusenCalc_v5.apk（約 0.3MB）</div></div>
+      </div>
+      <div class="box">
+        <div class="ttl">WEB APP<span>Web 版（iPhone・iPad）　v6</span></div>
+        <a class="btn" href="https://chocorin0000.github.io/chou-fusen/" target="_blank" rel="noopener">ACCESS <small>Web 版を開く</small></a>
+        <div class="row"><img class="qr" src="qr/fusen-web.svg" alt="Web 版を開く QR コード">
+          <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。パソコンのブラウザでも使えます。</div></div>
+      </div>
+    </div>
+    <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/fusen-android/">Android 版のマニュアル</a>
+      <a href="manual/fusen-web/">Web 版のマニュアル</a>
+      <a href="manual.html#fusen">PDF はこちら</a></div>
   </article>
 
   <!-- 超！手書き -->
@@ -171,36 +203,28 @@
       <a href="manual.html#kaden">PDF はこちら</a></div>
   </article>
 
-  <!-- 超！付箋電卓 -->
-  <article class="card">
+  <!-- 超！画面翻訳 -->
+  <article class="card" id="honyaku">
     <div class="head">
-      <img src="icons/fusen-android.png" alt="超！付箋電卓のアイコン">
-      <div><h3>超！付箋電卓</h3><div class="tag">STICKY NOTE CALCULATOR</div></div>
+      <img src="icons/honyaku-windows.png" alt="超！画面翻訳のアイコン">
+      <div><h3>超！画面翻訳</h3><div class="tag">SCREEN TRANSLATOR</div></div>
     </div>
-    <p class="desc">計算した数字を付箋にして貼っておき、あとで足したり計算に使ったりできる電卓です。広告は出ません。</p>
+    <p class="desc"><b>画面を四角く囲むだけで、英語を日本語に。</b>Claude Code の PowerShell の画面に出てくる英語の文を、かんたんに翻訳できる Windows ソフトです。いろいろなホームページで英語が出てきたときなどにも使えます。</p>
     <ul class="feat">
-      <li>数字の欄を上に引っぱると付箋に。付箋を欄へ戻すと計算に使える。付箋の計算式もあとで見られる</li>
-      <li>タップで選んだ付箋だけを合計、2 本指でキャンバスを動かして何枚でも</li>
-      <li>消費税（10%・8%）の税込・税抜、円・ドル・ユーロをその日のレートで</li>
+      <li>マウスで囲むと、数秒で日本語訳と原文を表示</li>
+      <li>常駐させれば、Ctrl + Alt + T でいつでも囲める</li>
+      <li>訳と原文を、西暦の日付と時間つきで自動で履歴に保存。検索もできる</li>
     </ul>
     <div class="ver">
       <div class="box">
-        <div class="ttl">ANDROID<span>Android 版　v5</span></div>
-        <a class="btn" href="apk/FusenCalc_v5.apk" download>DOWNLOAD <small>APK を入れる</small></a>
-        <div class="row"><img class="qr" src="qr/fusen-apk.svg" alt="Android 版をダウンロードする QR コード">
-          <div class="qrnote">パソコンで見ているときは、スマホのカメラでこの QR コードを読むと、ダウンロードできます。<br>FusenCalc_v5.apk（約 0.3MB）</div></div>
-      </div>
-      <div class="box">
-        <div class="ttl">WEB APP<span>Web 版（iPhone・iPad）　v6</span></div>
-        <a class="btn" href="https://chocorin0000.github.io/chou-fusen/" target="_blank" rel="noopener">ACCESS <small>Web 版を開く</small></a>
-        <div class="row"><img class="qr" src="qr/fusen-web.svg" alt="Web 版を開く QR コード">
-          <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。パソコンのブラウザでも使えます。</div></div>
+        <div class="ttl">WINDOWS<span>Windows 版　v3</span></div>
+        <a class="btn" href="win/超！画面翻訳_セットアップ_v3.exe" download>DOWNLOAD <small>セットアップ</small></a>
+        <div class="qrnote" style="margin-top:10px">ダブルクリックして「インストール」を押すだけです。管理者の許可はいりません。アンインストールもできます。<br>超！画面翻訳_セットアップ_v3.exe（約 0.6MB）<br>Windows 10 / 11 用。</div>
       </div>
     </div>
+    <div class="warn">翻訳には Gemini の API キー（無料）が要ります。作り方はマニュアルの 5 章にあります。<br>囲んだ部分は画像のまま Google に送られます。パスワードや個人情報が映っている部分は囲まないでください。</div>
     <div class="mans"><span class="k">MANUAL</span>
-      <a href="manual/fusen-android/">Android 版のマニュアル</a>
-      <a href="manual/fusen-web/">Web 版のマニュアル</a>
-      <a href="manual.html#fusen">PDF はこちら</a></div>
+      <a href="manual/honyaku-windows/">Windows 版のマニュアル</a></div>
   </article>
 </section>
 
@@ -240,6 +264,17 @@
       </ol>
       <p class="note">Android では、ふつうは APK 版のほうが便利です。</p>
     </div>
+    <div class="card">
+      <div class="tag">WINDOWS</div>
+      <h3>Windows パソコン</h3>
+      <ol>
+        <li>超！画面翻訳の <b>DOWNLOAD</b> を押して保存する</li>
+        <li>保存したファイルをダブルクリックする</li>
+        <li>「Windows によって PC が保護されました」と出たら「<b>詳細情報</b>」→「<b>実行</b>」</li>
+        <li>「<b>インストール</b>」を押す</li>
+      </ol>
+      <p class="note">写真つきの説明: <a href="manual/honyaku-windows/">超！画面翻訳のマニュアル</a></p>
+    </div>
   </div>
   <div class="warn">
     APK のアプリは Google Play（アプリのお店）には出していないので、入れるときに注意の表示が出ます。このページからダウンロードしたものなら、そのまま進めてください。<br>
@@ -250,8 +285,8 @@
 <section id="manual">
   <h2 class="sec"><span class="en">MANUAL</span><span class="ja">使い方マニュアル</span></h2>
   <div class="card">
-    <p style="margin-top:0">11 冊のマニュアル（5 つのアプリ × Android 版・Web 版と、APK の入れ方）があります。<br>
-    <b>VIEW</b> はダウンロードせずにこの場で読む（HTML）、<b>PDF</b> はファイルでダウンロードして保存・印刷できます。</p>
+    <p style="margin-top:0">12 冊のマニュアル（5 つのアプリ × Android 版・Web 版、超！画面翻訳、APK の入れ方）があります。<br>
+    <b>VIEW</b> はダウンロードせずにこの場で読む（HTML）、<b>PDF</b> はファイルでダウンロードして保存・印刷できます（超！画面翻訳の PDF は、インストールすると本体と一緒に入ります）。</p>
     <a class="btn" href="manual.html">ENTER <small>マニュアルの一覧へ</small></a>
   </div>
 </section>
