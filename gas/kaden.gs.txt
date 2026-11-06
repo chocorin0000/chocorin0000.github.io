@@ -1,0 +1,569 @@
+// 家電チェッカー Web 版（もとは「家電の年数チェック」Web 版）Google Apps Script 2026-10-31 / 2026-11-02 更新
+//
+// しくみ:
+//   - 2026-11-02 から、ページは GitHub に置いた「家電チェッカー」（https://chocorin0000.github.io/kaden-checker/）。
+//     そのページから doPost で呼ばれる（JSON。action = check / analyze / manual）
+//   - 写真を Gemini に見せて、品番・メーカー・製造年・年代を読んでもらう
+//   - 読めた品番を価格.com で検索して（このスクリプトがページを読む）、そのページの文字から Gemini に発売日を見つけてもらう
+//   - 取扱説明書: メーカーのサイトから PDF を探す（パナソニック・シャープ・日立・東芝・ソニー・象印）。AI は使わない
+//   - Gemini の API キーと合言葉は「スクリプト プロパティ」にしまう（ページには出さない）
+//
+// 準備（1 回だけ）:
+//   1. script.google.com で新しいプロジェクトを作り、このコードを「コード.gs」に貼る
+//      （家電チェッカーのページからは doPost で呼ぶので、index.html は要らない。URL をブラウザーで直接開くとエラーになるが、問題ない）
+//   2. 左の歯車「プロジェクトの設定」→ いちばん下「スクリプト プロパティ」に 2 つ足す
+//        GEMINI_KEY = Google AI Studio で作った API キー
+//        PASS       = 合言葉（ページを開いたときに入れる。家族だけに教える）
+//   3. 「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、次のユーザーとして実行「自分」、
+//      アクセスできるユーザー「全員」→「デプロイ」。出てきた URL（/exec で終わる）をページの設定に入れる
+//   コードを直したときは「デプロイ」→「デプロイを管理」→ 鉛筆 → バージョン「新バージョン」→「デプロイ」（URL は変わらない）
+
+var MODELS = ['gemini-3.5-flash-lite', 'gemini-3.8-flash'];  // 上から順に試す（混んでいるときなどは次へ）
+var PER_DAY = 30;  // 1 日にこの回数まで（家族みんなで。使いすぎ防止）
+
+// ?k=<鍵の文字> 付きで開いたら、合言葉を聞かない。
+// （iPhone の Safari は、はめこまれたページの localStorage をアプリを閉じると消すので、合言葉を覚えておけない。
+//   鍵の文字を URL に入れてホーム画面に追加してもらう）
+function doGet(e) {
+  var t = HtmlService.createTemplateFromFile('index');
+  var k = e && e.parameter && e.parameter.k || '';
+  t.preset = k && samePass_(k) ? k : '';
+  t.appUrl = ScriptApp.getService().getUrl();
+  return t.evaluate()
+      .setTitle('家電の年数')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+// GitHub に置いたページから呼ばれる。送られてくるのは JSON（{action, pass, ...}）、返すのも JSON
+function doPost(e) {
+  var req;
+  try {
+    req = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return json_({error: '送られたデータが読めません'});
+  }
+  try {
+    if (req.action === 'check') return json_(samePass_(req.pass) ? {ok: true} : {error: '合言葉が違います'});
+    if (!samePass_(req.pass)) return json_({error: '合言葉が違います'});
+    if (req.action === 'analyze') return json_(analyze(req.pass, req.jpeg || null, req.model || ''));
+    if (req.action === 'manual') return json_(manual_(req.model || '', req.maker || ''));
+    if (req.action === 'pdf') return json_(pdf_(req));
+    return json_({error: '知らない命令です: ' + req.action});
+  } catch (err) {
+    return json_({error: String(err && err.message || err)});
+  }
+}
+
+function json_(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// 合言葉が合っているか（前のページの最初に確かめる）。合っていれば鍵の文字、違えば空を返す
+function checkPass(pass) {
+  return samePass_(pass) ? token_() : '';
+}
+
+// 写真（JPEG の base64）と、手で入れた品番から調べる。ページから google.script.run / doPost で呼ぶ
+function analyze(pass, jpegBase64, typedModel) {
+  if (!samePass_(pass)) return {error: '合言葉が違います'};
+  if (!prop_('GEMINI_KEY')) return {error: 'スクリプト プロパティに GEMINI_KEY がありません'};
+  var typed = norm_(typedModel || '');
+
+  // 前に調べた品番なら、AI に聞かない（回数も数えない）
+  if (typed && !jpegBase64) {
+    var c = cached_(typed);
+    if (c) return {model: typed, hit: c, fromCache: true};
+  }
+  if (!countUse_()) return {error: '今日は ' + PER_DAY + ' 回使いました。明日また使えます'};
+
+  var look = null;
+  try {
+    if (jpegBase64) look = look_(jpegBase64);
+  } catch (e) {
+    return {error: String(e.message || e)};
+  }
+
+  // 確かめる品番: AI が写真から読んだもの → 手で入れた品番（最大 3 つ）。だめなら読み違えやすい文字を入れ替えたもの
+  var tries = [];
+  if (look) look.models.forEach(function(m) { if (tries.indexOf(m) < 0) tries.push(m); });
+  if (typed && tries.indexOf(typed) < 0) tries.push(typed);
+  tries = tries.slice(0, 3);
+  var maker = look && look.maker ? look.maker : '';
+  var log = [];
+  var all = tries.concat(lookAlikes_(tries, 8));
+  for (var i = 0; i < all.length; i++) {
+    var t = all[i];
+    var hit = cached_(t);
+    var fromCache = !!hit;
+    if (!hit) {
+      try {
+        hit = release_(maker, t);
+      } catch (e) {
+        log.push(t + ': ' + (e.message || e));
+        continue;
+      }
+      log.push(t + ': ' + (hit ? hit.year + '/' + hit.month : 'なし'));
+      if (hit) PropertiesService.getScriptProperties().setProperty('c_' + t, JSON.stringify(hit));
+    }
+    if (hit) return {look: look, model: t, typed: typed, hit: hit, fromCache: fromCache, tries: tries, log: log};
+  }
+  return {look: look, typed: typed, tries: tries, log: log};
+}
+
+// ---------------------------------------------------------------
+// Gemini
+// ---------------------------------------------------------------
+
+function look_(jpegBase64) {
+  var prompt = 'この写真に写っている家電について、分かることを答えてください。\n'
+      + '本体に書いてある文字（メーカー名、シリーズ名、品番、製造年のシールなど）があれば、小さな文字もよく読んでください。\n'
+      + '次の形の JSON だけを返してください（説明の文は付けない）:\n'
+      + '{"kind": "家電の種類", "maker": "メーカー（分からなければ空）", "series": "シリーズ名（分からなければ空）", '
+      + '"models": [{"model": "品番", "confidence": 0から100}], "made_year": 0, '
+      + '"era": "見た目から考えた、発売のだいたいの年代", "note": "そう考えた理由を短く", '
+      + '"texts": [{"text": "読めた文字", "role": "model か maker か other", "box_2d": [ymin, xmin, ymax, xmax]}]}\n'
+      + 'models は、写真から読めた品番だけを、自信の高い順に最大 3 つ。見た目からの推測で品番を作らないでください。'
+      + 'made_year は製造年のシールが読めたときだけ、その年（なければ 0）。'
+      + 'texts は、写真の中の品番・メーカー名・型式・製造年などの文字のかたまり（最大 12 個）。'
+      + 'box_2d はその文字を囲む四角で、写真の縦と横をそれぞれ 0〜1000 とした数。role は品番なら model、メーカー名なら maker、ほかは other。';
+  var j = jsonIn_(gemini_([{inline_data: {mime_type: 'image/jpeg', data: jpegBase64}}, {text: prompt}]));
+  var l = {kind: '', maker: '', series: '', era: '', note: '', madeYear: 0, models: [], texts: []};
+  if (!j) return l;
+  l.kind = j.kind || '';
+  l.maker = j.maker || '';
+  l.series = j.series || '';
+  l.era = j.era || '';
+  l.note = j.note || '';
+  l.madeYear = (j.made_year >= 1950 && j.made_year <= 2100) ? j.made_year : 0;
+  (j.models || []).forEach(function(m) {
+    if (!m || (m.confidence || 0) < 50) return;  // 自信の低い候補は使わない
+    var s = norm_(m.model || '');
+    if (s && l.models.indexOf(s) < 0) l.models.push(s);
+  });
+  // 文字のある場所（写真の上に枠を出す）。box は [左, 上, 右, 下]（写真の幅・高さを 1 とした数）
+  (j.texts || []).slice(0, 12).forEach(function(t) {
+    var b = t && t.box_2d;
+    if (!t || !t.text || !b || b.length !== 4) return;
+    var v = b.map(function(x) { return Math.max(0, Math.min(1000, Number(x) || 0)) / 1000; });
+    if (v[2] <= v[0] || v[3] <= v[1]) return;
+    l.texts.push({text: String(t.text), role: t.role === 'model' || t.role === 'maker' ? t.role : 'other', box: [v[1], v[0], v[3], v[2]]});
+  });
+  return l;
+}
+
+// 価格.com で品番を調べて、発売日を返す。見つからなければ null
+function release_(maker, model) {
+  var url = 'https://search.kakaku.com/' + encodeURIComponent(model) + '/';
+  var res = UrlFetchApp.fetch(url, {muteHttpExceptions: true, followRedirects: true});
+  if (res.getResponseCode() !== 200) return null;
+  var page = res.getContentText('Shift_JIS')
+      .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ');
+  if (page.indexOf('発売') < 0) return null;
+  page = page.substring(0, 12000);
+  var prompt = '次は、価格.com で品番「' + model + '」' + (maker ? '（メーカー: ' + maker + '）' : '')
+      + 'を検索した結果のページの文字です。\n'
+      + 'この品番に当てはまる商品の発売日を見つけてください。品番の最後の色を表す記号（-W、-K など）が違うだけなら、同じ機種です。\n'
+      + '答えは、次の形の JSON だけを返してください（説明の文は付けない）:\n'
+      + '{"found": true, "product": "商品名（種類がわかるように）", "year": 2023, "month": 7, "note": "根拠を短く"}\n'
+      + '月が分からなければ month は 0。当てはまる商品がない、または発売日が書いていないときは found を false にしてください。'
+      + '推測で年を作らないでください。\n\n---\n' + page;
+  var j = jsonIn_(gemini_([{text: prompt}]));
+  if (!j || !j.found || !(j.year >= 1950 && j.year <= 2100)) return null;
+  return {product: j.product || '', year: j.year, month: (j.month >= 1 && j.month <= 12) ? j.month : 0,
+          note: j.note || '', url: url};
+}
+
+function gemini_(parts) {
+  var body = JSON.stringify({contents: [{role: 'user', parts: parts}], generationConfig: {temperature: 0}});
+  var last = '';
+  for (var i = 0; i < MODELS.length; i++) {
+    var res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODELS[i] + ':generateContent', {
+      method: 'post', contentType: 'application/json', payload: body, muteHttpExceptions: true,
+      headers: {'x-goog-api-key': prop_('GEMINI_KEY')}
+    });
+    var code = res.getResponseCode();
+    if (code === 200) {
+      var c = (JSON.parse(res.getContentText()).candidates || [])[0];
+      var parts2 = c && c.content && c.content.parts || [];
+      return parts2.map(function(p) { return p.text || ''; }).join('').trim();
+    }
+    last = errorMessage_(code, res.getContentText());
+    if (code !== 429 && code !== 404 && code < 500) break;  // キーが違うなど、ほかの AI でも同じ失敗
+  }
+  throw new Error(last);
+}
+
+function errorMessage_(code, text) {
+  var msg = '';
+  try { msg = JSON.parse(text).error.message || ''; } catch (e) {}
+  if (code === 400 && msg.indexOf('API key') >= 0) return 'API キーが正しくないようです（スクリプト プロパティの GEMINI_KEY）';
+  if (code === 403) return 'この API キーは使えないようです（' + code + '）';
+  if (code === 429) return '無料の回数の上限に届きました。少し待つか、明日また使ってください';
+  if (code >= 500) return 'Gemini の側が混んでいるようです。少し待ってから、もう一度押してください';
+  return 'AI で調べられませんでした（' + code + '）' + (msg ? ': ' + msg : '');
+}
+
+// ---------------------------------------------------------------
+// 取扱説明書（メーカーのサイトから PDF を探す。Android 版の Manual.java と同じたどり方。AI は使わない）
+// 返すもの: {found: {maker, sku, name, release, page, docs: [{title, url}], note}}
+//        か {found: null, maker, direct（直接たどれるメーカーで探したか）, errors}
+// ---------------------------------------------------------------
+
+var MAKERS_ = [
+  ['パナソニック', /panasonic|パナソニック|national|ナショナル|松下/i, function(m) { return panasonic_(m); }],
+  ['シャープ', /sharp|シャープ/i, function(m) { return sharp_(m); }],
+  ['日立', /hitachi|日立/i, function(m) { return hitachi_(m); }],
+  ['東芝', /toshiba|東芝/i, function(m) { return toshiba_(m); }],
+  ['ソニー', /sony|ソニー/i, function(m) { return sony_(m); }],
+  ['象印', /zojirushi|象印/i, function(m) { return zojirushi_(m); }]
+];
+
+function manual_(model, maker) {
+  model = norm_(model).replace(/[^0-9A-Z\-\/()]/g, '');
+  if (!model) return {error: '品番を入れてください'};
+  var list = MAKERS_.filter(function(m) { return maker && m[1].test(maker); });
+  var known = list.length > 0;
+  if (!known) {
+    if (maker) return {found: null, maker: /mitsubishi|三菱/i.test(maker) ? '三菱' : maker, direct: false, errors: []};
+    list = MAKERS_; // メーカーが分からないときは全部を順に
+  }
+  var errors = [];
+  for (var i = 0; i < list.length; i++) {
+    try {
+      var f = list[i][2](model);
+      if (f && f.docs.length) {
+        sortDocs_(f.docs);
+        return {found: f};
+      }
+    } catch (e) {
+      errors.push(list[i][0] + ': ' + (e.message || e));
+    }
+  }
+  return {found: null, maker: known ? list[0][0] : '', direct: true, errors: errors};
+}
+
+function mnorm_(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+
+// 転送を自分でたどって、最後の URL と Cookie も返す
+function fetch_(url, opt) {
+  opt = opt || {};
+  var cookies = opt.cookies || {};
+  var method = opt.method || 'get', payload = opt.payload;
+  for (var hop = 0; hop < 6; hop++) {
+    var h = {'User-Agent': 'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Mobile Safari/537.36',
+             'Accept-Language': 'ja'};
+    var ck = Object.keys(cookies).map(function(k) { return k + '=' + cookies[k]; }).join('; ');
+    if (ck) h['Cookie'] = ck;
+    if (opt.referer) h['Referer'] = opt.referer;
+    var o = {method: method, headers: h, muteHttpExceptions: true, followRedirects: false};
+    if (payload != null) { o.payload = payload; o.contentType = 'application/x-www-form-urlencoded'; }
+    var res = UrlFetchApp.fetch(url, o);
+    var hd = res.getAllHeaders();
+    var sc = hd['Set-Cookie'] || hd['set-cookie'];
+    if (sc) (Array.isArray(sc) ? sc : [sc]).forEach(function(s) {
+      var kv = String(s).split(';')[0], eq = kv.indexOf('=');
+      if (eq > 0) cookies[kv.substring(0, eq).trim()] = kv.substring(eq + 1).trim();
+    });
+    var code = res.getResponseCode();
+    var loc = hd['Location'] || hd['location'];
+    if (code >= 300 && code < 400 && loc) {
+      url = absUrl_(url, Array.isArray(loc) ? loc[0] : loc);
+      method = 'get';
+      payload = null;
+      continue;
+    }
+    return {code: code, url: url, cookies: cookies, text: code === 200 ? res.getContentText(opt.charset || 'UTF-8') : ''};
+  }
+  throw new Error('転送が多すぎます');
+}
+
+// 相対の URL（../docs/a.pdf など）を、ページの URL をもとに https://… の形にする
+function absUrl_(base, href) {
+  href = href.replace(/&amp;/g, '&');
+  if (/^https?:\/\//i.test(href)) return href;
+  var m = base.match(/^(https?:)\/\/([^\/?#]+)([^?#]*)/);
+  var proto = m[1], origin = m[1] + '//' + m[2], path = m[3] || '/';
+  if (href.indexOf('//') === 0) return proto + href;
+  if (href.charAt(0) === '/') return origin + href;
+  var q = '';
+  var qi = href.search(/[?#]/);
+  if (qi >= 0) { q = href.substring(qi); href = href.substring(0, qi); }
+  var segs = path.substring(0, path.lastIndexOf('/') + 1).split('/');
+  segs.pop(); // 最後の空（/ で終わる分）
+  href.split('/').forEach(function(p) {
+    if (p === '..') { if (segs.length > 1) segs.pop(); }
+    else if (p !== '.') segs.push(p);
+  });
+  return origin + segs.join('/') + q;
+}
+
+function unent_(s) {
+  return String(s).replace(/&#x([0-9a-f]+);/gi, function(a, h) { return String.fromCharCode(parseInt(h, 16)); })
+      .replace(/&#(\d+);/g, function(a, d) { return String.fromCharCode(parseInt(d, 10)); })
+      .replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+}
+
+function pdfLinks_(html, base, out) {
+  var re = /<a\b[^>]*?href="([^"]+?\.pdf[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, m;
+  while ((m = re.exec(html))) {
+    var title = unent_(m[2].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+    if (!title) continue;
+    var abs = absUrl_(base, m[1]);
+    if (!out.some(function(d) { return d.url === abs; })) out.push({title: title, url: abs});
+  }
+}
+
+// 取扱説明書をいちばん上に、施工説明書（工事の人向け）はいちばん下に
+function sortDocs_(docs) {
+  function rank(t) { return t.indexOf('施工') >= 0 ? 2 : t.indexOf('取扱説明書') === 0 ? 0 : 1; }
+  docs.sort(function(a, b) { return rank(a.title) - rank(b.title); });
+}
+
+function ym_(text) {
+  var y = String(text).match(/((?:19|20)\d\d)年(\d{1,2})月/);
+  return y ? y[1] + '/' + ('0' + y[2]).slice(-2) + '/01' : null;
+}
+
+// パナソニック: サイトの品番検索（GraphQL）→ 製品のサポートのページ → PDF
+function panasonic_(model) {
+  var q = 'query S($keyword:String,$filter:SiteSearchFilterInput,$limit:Int,$offset:Int)'
+      + '{siteSearch(keyword:$keyword,filter:$filter,limit:$limit,offset:$offset){supports{name sku release_date url}}}';
+  var v = {keyword: model, filter: {is_plan: false, is_instructions: true, type: '5'}, limit: 10, offset: 0};
+  var r = fetch_('https://1006091-adobeiopisc.adobeioruntime.net/api/v1/web/PanasonicCIF-2.0.0/io?query=' + encodeURIComponent(q)
+      + '&variables=' + encodeURIComponent(JSON.stringify(v)) + '&operationName=S');
+  if (r.code !== 200) throw new Error('サイトの答えが ' + r.code);
+  var a = (((JSON.parse(r.text).data || {}).siteSearch || {}).supports) || [];
+  if (!a.length) return null;
+  var n = mnorm_(model), best = null;
+  a.forEach(function(x) { if (!best && mnorm_(x.sku) === n) best = x; });
+  a.forEach(function(x) { if (!best && mnorm_(x.sku).indexOf(n) === 0) best = x; });
+  best = best || a[0];
+  var page = best.url || ('https://panasonic.jp/c-sites/product.html?hb=' + encodeURIComponent(best.sku) + '&tab=support');
+  var p = fetch_(page);
+  var f = {maker: 'パナソニック', sku: best.sku, name: best.name || '', release: best.release_date || null, page: p.url, docs: []};
+  pdfLinks_(p.text, p.url, f.docs);
+  return f;
+}
+
+// シャープ: ご利用条件のページで Cookie をもらい、説明書の一覧のページ → PDF（PDF は Cookie なしで開ける）
+function sharp_(model) {
+  var id = model.replace(/[^0-9A-Z-]/g, '');
+  var r1 = fetch_('https://cs.sharp.co.jp/select/download?productId=' + id, {charset: 'Shift_JIS'});
+  var r = fetch_('https://cs.sharp.co.jp/select/downloadInfo', {cookies: r1.cookies, charset: 'Shift_JIS',
+      referer: 'https://cs.sharp.co.jp/select/download?productId=' + id});
+  var f = {maker: 'シャープ', sku: id, name: '', release: null, page: 'https://jp.sharp/support/download/members/?productId=' + id, docs: []};
+  pdfLinks_(r.text, r.url, f.docs);
+  return f;
+}
+
+// 日立: 説明書検索の全機種の一覧（search.json）→ 機種の説明書のページ → PDF
+function hitachi_(model) {
+  var n = mnorm_(model.replace(/-\d$/, ''));
+  var r = fetch_('https://kadenfan.hitachi.co.jp/support/manual/search.json');
+  if (r.code !== 200) throw new Error('サイトの答えが ' + r.code);
+  var a = JSON.parse(r.text).items || [], best = null, len = 0;
+  a.forEach(function(x) { if (!best && mnorm_(x.title) === n) best = x; });
+  if (!best) a.forEach(function(x) { var t = mnorm_(x.title); if (t.length >= 4 && n.indexOf(t) === 0 && t.length > len) { len = t.length; best = x; } });
+  if (!best) a.forEach(function(x) { if (!best && mnorm_(x.title).indexOf(n) === 0) best = x; });
+  if (!best) return null;
+  var p = fetch_('https://kadenfan.hitachi.co.jp' + best.url);
+  var f = {maker: '日立', sku: best.title, name: best.productsname || '', page: p.url, docs: []};
+  var y = p.text.match(/((?:19|20)\d\d)年(\d{1,2})月発売/);
+  f.release = y ? y[1] + '/' + ('0' + y[2]).slice(-2) + '/01' : null;
+  pdfLinks_(p.text, p.url, f.docs);
+  return f;
+}
+
+// 東芝: PDF は「同意」のときの Cookie がないと開けず、ページからは直接開けない。
+// そのため東芝のページ（「同意して次へ」を押すと説明書の一覧）を開いてもらう
+function toshiba_(model) {
+  var f = toshibaTry_(model);
+  if (!f) {
+    var s = model.replace(/\(.*?\)$/, '').replace(/-[A-Z]{1,3}$/, '');
+    if (s === model) s = model.replace(/(\d)[A-Z]{1,2}$/, '$1');
+    if (s !== model && s) f = toshibaTry_(s);
+  }
+  return f;
+}
+
+function toshibaTry_(model) {
+  var id = model.replace(/[^0-9A-Z-]/g, '');
+  var r = fetch_('https://www.toshiba-living.jp/search_name_list.php', {method: 'post', payload: 'refine=4&query=' + encodeURIComponent(id)});
+  var re = /<td class="head">\s*<span class="inner">\s*([\s\S]*?)\s*<\/span>[\s\S]*?<td class="name"><div class="inner">([\s\S]*?)<\/div><\/td>\s*<td class="tag[^"]*"><div class="inner">([\s\S]*?)<\/div><\/td>[\s\S]*?rev\.php\?no=(\d+)&amp;sid=(\d+)/g;
+  var n = mnorm_(id), best = null, score = 0, m;
+  while ((m = re.exec(r.text))) {
+    var ns = mnorm_(m[2]);
+    var sc = ns === n ? 3 : n.indexOf(ns) === 0 ? 2 : ns.indexOf(n) === 0 ? 1 : 0;
+    if (sc > score) { score = sc; best = m; }
+  }
+  if (!best) return null;
+  var page = 'https://www.toshiba-living.jp/rev.php?no=' + best[4] + '&sid=' + best[5];
+  var f = {maker: '東芝', sku: best[2].trim(), name: best[1].trim(), release: ym_(best[3]), page: page, docs: [],
+           note: '東芝の「見る」は東芝のページが開きます。「上記内容に同意します」にチェックして「同意して次へ」を押すと、説明書の一覧が出ます（「保存」はそのまま保存できます）'};
+  // 同意した先の PDF の一覧。PDF は同意の Cookie がないと開けないので、見るときは東芝のページ、保存はスクリプトが代わりに取る
+  var a = fetch_('https://www.toshiba-living.jp/rev.php', {method: 'post', payload: 'no=' + best[4] + '&sid=' + best[5] + '&YN=Y', referer: page});
+  pdfLinks_(a.text, a.url, f.docs);
+  f.docs.forEach(function(d) { d.view = page; d.toshiba = {no: best[4], sid: best[5]}; });
+  if (!f.docs.length) f.docs.push({title: '東芝のページで見る', url: page, view: page});
+  return f;
+}
+
+// ソニー: 機種の「取扱説明書」のページ（分類の部分は何でもよい）→ PDF
+function sony_(model) {
+  var id = model.replace(/[^0-9A-Z-]/g, '').toLowerCase();
+  var page = 'https://support.sony.jp/electronics/support/products/' + id + '/manuals';
+  var r = fetch_(page);
+  if (r.code !== 200) return null;
+  var f = {maker: 'ソニー', sku: model, name: '', release: null, page: page, docs: []};
+  var re = /<a class="item-link[^"]*" href="([^"]+?\.pdf)"[^>]*>[\s\S]*?<!-- react-text: \d+ -->([\s\S]*?)<!-- \/react-text -->/g, m;
+  while ((m = re.exec(r.text))) {
+    var url = m[1], t = unent_(m[2]).trim(), parts = t.split(' - ');
+    if (parts.length === 2 && parts[0].trim() === parts[1].trim()) t = parts[0].trim();
+    if (!f.docs.some(function(d) { return d.url === url; })) f.docs.push({title: t || '説明書', url: url});
+  }
+  return f;
+}
+
+// 象印: 説明書の品番検索 → 製品のページ → PDF。色の記号（-BA など）があれば外してもう一度
+function zojirushi_(model) {
+  var f = zojiTry_(model);
+  if (!f && /-[A-Z]{1,3}$/.test(model)) f = zojiTry_(model.substring(0, model.lastIndexOf('-')));
+  return f;
+}
+
+function zojiTry_(model) {
+  var id = model.replace(/[^0-9A-Z-]/g, '');
+  var r = fetch_('https://www.zojirushi.co.jp/toiawase/manual/search/?s=' + encodeURIComponent(id));
+  var re = /<a\b[^>]*?href="(\/toiawase\/manual\/[a-z0-9-]+\/)"[^>]*>([\s\S]*?)<\/a>/g, m, n = mnorm_(id);
+  while ((m = re.exec(r.text))) {
+    var text = unent_(m[2].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+    if (mnorm_(text).indexOf(n) < 0) continue;
+    var p = fetch_('https://www.zojirushi.co.jp' + m[1]);
+    var y = text.match(/((?:19|20)\d\d)年発売/);
+    var f = {maker: '象印', sku: id, name: text, release: y ? y[1] : null, page: p.url, docs: []};
+    pdfLinks_(p.text, p.url, f.docs);
+    if (f.docs.length) return f;
+  }
+  return null;
+}
+
+// 確かめる用（スクリプトの画面で関数「testManual」を選んで「実行」）
+function testManual() {
+  ['BD-SX120HL', 'AW-10DP3', 'KJ-55X85J', 'NW-JX10-BA', 'NA-F45B6'].forEach(function(m) {
+    var r = manual_(m, '');
+    Logger.log(m + ' -> ' + (r.found ? r.found.maker + ' ' + r.found.docs.length + ' 件 ' + r.found.docs[0].title + ' ' + r.found.docs[0].url
+        : JSON.stringify(r)));
+  });
+}
+
+// ---------------------------------------------------------------
+// こまかいもの
+// ---------------------------------------------------------------
+
+function prop_(name) {
+  return PropertiesService.getScriptProperties().getProperty(name) || '';
+}
+
+// 合言葉を比べる。全角と半角（iPhone の日本語キーボードだと全角になる）、大文字と小文字、前後の空白の違いは気にしない。
+// 合言葉の代わりに鍵の文字（token_）でもよい
+function samePass_(pass) {
+  var want = passNorm_(prop_('PASS'));
+  return want !== '' && (passNorm_(pass) === want || String(pass) === token_());
+}
+
+// 鍵の文字: 合言葉から作る 20 文字（URL に合言葉そのものを入れないように）。合言葉を変えると鍵の文字も変わる
+function token_() {
+  var d = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, 'kaden-age:' + passNorm_(prop_('PASS')), Utilities.Charset.UTF_8);
+  return d.map(function(b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('').substring(0, 20);
+}
+
+function passNorm_(s) {
+  return String(s || '').normalize('NFKC').trim().toUpperCase();
+}
+
+function norm_(s) {
+  return String(s).toUpperCase().replace(/[\s　]/g, '').replace(/[‐－―−ー]/g, '-');
+}
+
+function cached_(model) {
+  var s = model ? prop_('c_' + model) : '';
+  if (!s) return null;
+  try { return JSON.parse(s); } catch (e) { return null; }
+}
+
+// 今日の回数を 1 つ増やす。上限に届いていたら false
+function countUse_() {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMdd');
+    var used = props.getProperty('day') === today ? Number(props.getProperty('used') || 0) : 0;
+    if (used >= PER_DAY) return false;
+    props.setProperties({day: today, used: String(used + 1)});
+    return true;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 読み違えやすい文字（S と 5、G と 6 など）を 1 字だけ入れ替えた品番（合わせて最大 max 個）
+function lookAlikes_(models, max) {
+  var pairs = {S: '5', '5': 'S', G: '6', '6': 'G', B: '8', '8': 'B', O: '0', '0': 'O', D: '0', I: '1', '1': 'I', Z: '2', '2': 'Z'};
+  var out = [];
+  models.forEach(function(m) {
+    for (var i = 0; i < m.length && out.length < max; i++) {
+      var to = pairs[m.charAt(i)];
+      if (!to) continue;
+      var v = m.substring(0, i) + to + m.substring(i + 1);
+      if (models.indexOf(v) < 0 && out.indexOf(v) < 0) out.push(v);
+    }
+  });
+  return out.slice(0, max);
+}
+
+// 返事の中の { … } を JSON として読む（前後に ``` や文が付いていても大丈夫なように）
+function jsonIn_(text) {
+  var a = text.indexOf('{'), b = text.lastIndexOf('}');
+  if (a < 0 || b <= a) return null;
+  try { return JSON.parse(text.substring(a, b + 1)); } catch (e) { return null; }
+}
+
+// ---------------------------------------------------------------
+// PDF を保存するために、スクリプトが代わりに取ってくる（ページはほかのサイトのファイルを直接読めないため）。
+// 大きな PDF もあるので、4MB ずつ（Range）。req = {url, start, toshiba}。返すもの {total, start, b64}
+// ---------------------------------------------------------------
+
+var PDF_HOSTS_ = /^https:\/\/([a-z0-9-]+\.)*(panasonic\.jp|jp\.sharp|sharp\.co\.jp|hitachi\.co\.jp|toshiba-living\.jp|sony\.com|sony\.jp|zojirushi\.co\.jp)\//i;
+var CHUNK_ = 4 * 1024 * 1024;
+
+function pdf_(req) {
+  var url = String(req.url || '');
+  if (!PDF_HOSTS_.test(url)) return {error: 'このサイトの PDF は保存できません'};
+  var start = Math.max(0, Number(req.start) || 0);
+  var cookies = {};
+  if (req.toshiba) { // 東芝: 先に「同意して次へ」をして Cookie をもらう
+    fetch_('https://www.toshiba-living.jp/rev.php', {method: 'post', cookies: cookies,
+        payload: 'no=' + encodeURIComponent(req.toshiba.no) + '&sid=' + encodeURIComponent(req.toshiba.sid) + '&YN=Y'});
+  }
+  var ck = Object.keys(cookies).map(function(k) { return k + '=' + cookies[k]; }).join('; ');
+  var h = {'User-Agent': 'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Mobile Safari/537.36',
+           'Range': 'bytes=' + start + '-' + (start + CHUNK_ - 1)};
+  if (ck) h['Cookie'] = ck;
+  var res = UrlFetchApp.fetch(url, {headers: h, muteHttpExceptions: true, followRedirects: true});
+  var code = res.getResponseCode();
+  if (code === 206) {
+    var hd = res.getAllHeaders();
+    var cr = String(hd['Content-Range'] || hd['content-range'] || '');
+    var total = Number((cr.match(/\/(\d+)/) || [])[1]) || 0;
+    return {total: total, start: start, b64: Utilities.base64Encode(res.getContent())};
+  }
+  if (code === 200) { // 少しずつ取れないサイト: 小さければ一度に
+    var all = res.getContent();
+    if (all.length > 20 * 1024 * 1024) return {error: 'PDF が大きすぎて、ここからは保存できません'};
+    return {total: all.length, start: 0, b64: Utilities.base64Encode(all)};
+  }
+  return {error: 'PDF を取れませんでした（' + code + '）'};
+}

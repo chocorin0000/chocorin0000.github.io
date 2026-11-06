@@ -1,0 +1,180 @@
+// 超！手書き（InkMemo）のクラウド保存用スクリプト
+// Google ドライブの「超！手書き」フォルダに、見る用の PDF と、アプリに戻す用のデータ（JSON）を保存する。
+//
+// 準備:
+//   1. プロジェクトの設定（歯車）→ スクリプト プロパティ に PASSWORD（合言葉）を入れて保存
+//      （Web 版で PDF の名前に冒頭の文字を入れるなら、GEMINI_KEY（Gemini の API キー）も入れる）
+//   2. デプロイ → 新しいデプロイ → 種類「ウェブアプリ」、次のユーザーとして実行「自分」、
+//      アクセスできるユーザー「全員」→ デプロイ → 承認 → ウェブアプリの URL をアプリの設定に入れる
+
+const FOLDER_NAME = '超！手書き';
+const DATA_NAME = '復元用データ';
+const DEL_NAME = '消したメモ';
+
+function doGet() {
+  return out({ ok: true, app: 'InkMemo' });
+}
+
+function doPost(e) {
+  let req;
+  try {
+    req = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return out({ ok: false, error: '送られたデータが読めません' });
+  }
+  const pass = PropertiesService.getScriptProperties().getProperty('PASSWORD');
+  if (!pass) return out({ ok: false, error: 'スクリプト プロパティに PASSWORD がありません' });
+  if (req.key !== pass) return out({ ok: false, error: '合言葉が違います' });
+  try {
+    switch (req.action) {
+      case 'ping': {
+        const f = folders();
+        return out({ ok: true, folder: f.main.getName(), url: f.main.getUrl(), count: list().items.length });
+      }
+      case 'save': return out(save(req));
+      case 'list': return out(list());
+      case 'get': return out(get(req.id));
+      case 'delete': return out(del(req.id));
+      case 'ocr': return out(ocr(req.png));
+    }
+    return out({ ok: false, error: '知らない命令です: ' + req.action });
+  } catch (err) {
+    return out({ ok: false, error: String(err) });
+  }
+}
+
+function out(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function cleanId(id) {
+  const s = String(id || '').replace(/[^0-9]/g, '');
+  if (!s) throw new Error('id がありません');
+  return s;
+}
+
+function sub(parent, name) {
+  const it = parent.getFoldersByName(name);
+  return it.hasNext() ? it.next() : parent.createFolder(name);
+}
+
+// 「超！手書き」フォルダ（マイドライブの直下）と、その中の 2 つのフォルダ
+function folders() {
+  const props = PropertiesService.getScriptProperties();
+  let main = null;
+  const id = props.getProperty('FOLDER_ID');
+  if (id) {
+    try {
+      main = DriveApp.getFolderById(id);
+      if (main.isTrashed()) main = null;
+    } catch (e) {
+      main = null;
+    }
+  }
+  if (!main) {
+    main = sub(DriveApp.getRootFolder(), FOLDER_NAME);
+    props.setProperty('FOLDER_ID', main.getId());
+  }
+  return { main: main, data: sub(main, DATA_NAME), del: sub(main, DEL_NAME) };
+}
+
+// PDF は説明欄にメモの id を入れておき、それで探す（ファイル名はアプリが決める。v14 から「メモ_冒頭の文字_日時.pdf」）
+function findPdf(folder, id) {
+  const out = [];
+  const it = folder.getFilesByType('application/pdf');
+  while (it.hasNext()) {
+    const f = it.next();
+    if (f.getDescription() === id) out.push(f);
+  }
+  return out;
+}
+
+function save(req) {
+  const id = cleanId(req.id);
+  const f = folders();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const old = f.data.getFilesByName(id + '.json');
+    while (old.hasNext()) old.next().setTrashed(true);
+    const j = f.data.createFile(id + '.json', String(req.json), 'application/json');
+    j.setDescription(String(req.updated || 0));
+    if (req.pdf) {
+      findPdf(f.main, id).forEach(function (p) { p.setTrashed(true); });
+      const name = String(req.pdfName || (id + '.pdf')).replace(/[\\/]/g, '_');
+      const blob = Utilities.newBlob(Utilities.base64Decode(req.pdf), 'application/pdf', name);
+      f.main.createFile(blob).setDescription(id);
+    }
+  } finally {
+    lock.releaseLock();
+  }
+  return { ok: true };
+}
+
+function list() {
+  const f = folders();
+  const items = [];
+  const it = f.data.getFiles();
+  while (it.hasNext()) {
+    const file = it.next();
+    const m = file.getName().match(/^(\d+)\.json$/);
+    if (!m) continue;
+    items.push({ id: m[1], updated: Number(file.getDescription()) || 0, size: file.getSize() });
+  }
+  return { ok: true, items: items };
+}
+
+function get(id) {
+  id = cleanId(id);
+  const it = folders().data.getFilesByName(id + '.json');
+  if (!it.hasNext()) return { ok: false, error: 'ありません: ' + id };
+  return { ok: true, json: it.next().getBlob().getDataAsString('UTF-8') };
+}
+
+// アプリで消したメモは、ごみ箱ではなく「消したメモ」フォルダに移す（あとで取り戻せるように）
+function del(id) {
+  id = cleanId(id);
+  const f = folders();
+  const it = f.data.getFilesByName(id + '.json');
+  while (it.hasNext()) it.next().moveTo(f.del);
+  findPdf(f.main, id).forEach(function (p) { p.moveTo(f.del); });
+  return { ok: true };
+}
+
+// ---- Web 版（iPhone・iPad）用: メモの 1 行目の画像から、ファイル名に使う冒頭の文字を読む ----
+// 1 行目だけの小さな画像（PNG）を Gemini に見せて、書いてある文字を返す。キーはスクリプト プロパティの GEMINI_KEY。
+const MODELS = ['gemini-3.5-flash-lite', 'gemini-3.8-flash']; // 上から順に試す（混んでいるときなどは次へ）
+
+function ocr(png) {
+  const key = PropertiesService.getScriptProperties().getProperty('GEMINI_KEY');
+  if (!key) return { ok: false, error: 'スクリプト プロパティに GEMINI_KEY がありません' };
+  if (!png || String(png).length > 400000) return { ok: false, error: '画像がありません' };
+  const prompt = 'この画像は、手書きの日本語のメモの 1 行目です。書かれている文字を、そのまま書き起こしてください。'
+    + '説明・かぎかっこ・記号は付けず、書き起こした文字だけを 1 行で返してください。読めないときは何も返さないでください。';
+  const body = JSON.stringify({
+    contents: [{ role: 'user', parts: [{ inline_data: { mime_type: 'image/png', data: String(png) } }, { text: prompt }] }],
+    generationConfig: { temperature: 0 },
+  });
+  let last = '';
+  for (let i = 0; i < MODELS.length; i++) {
+    const res = UrlFetchApp.fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODELS[i] + ':generateContent', {
+      method: 'post', contentType: 'application/json', payload: body, muteHttpExceptions: true,
+      headers: { 'x-goog-api-key': key },
+    });
+    const code = res.getResponseCode();
+    if (code === 200) {
+      const c = (JSON.parse(res.getContentText()).candidates || [])[0];
+      const parts = (c && c.content && c.content.parts) || [];
+      const text = parts.map(function (p) { return p.text || ''; }).join('').replace(/\s+/g, ' ').trim();
+      return { ok: true, text: text.slice(0, 40) };
+    }
+    last = 'Gemini の応答 ' + code;
+    if (code !== 429 && code !== 404 && code < 500) break; // キーが違うなど、ほかのモデルでも同じ失敗
+  }
+  return { ok: false, error: last };
+}
+
+// スクリプトの画面で一度実行すると、ドライブの使用の許可を先に出せる（なくてもよい）
+function test() {
+  Logger.log(JSON.stringify(list()));
+}

@@ -87,6 +87,10 @@
       <li>タップで選んだ付箋だけを合計、2 本指でキャンバスを動かして何枚でも</li>
       <li>消費税（10%・8%）の税込・税抜、円・ドル・ユーロをその日のレートで</li>
     </ul>
+    <div class="vidbox">
+      <div class="k">INTRO VIDEO<span>紹介動画（約 1 分 50 秒・音が出ます）</span></div>
+      <video class="vid" controls playsinline preload="none" poster="video/fusen-intro.jpg" src="video/fusen-intro.mp4"></video>
+    </div>
     <div class="ver">
       <div class="box">
         <div class="ttl">ANDROID<span>Android 版　v5</span></div>
@@ -133,7 +137,11 @@
           <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。</div></div>
       </div>
     </div>
+    <div class="warn"><b>Google ドライブへの自動保存を使うときは、GAS（Google Apps Script）の準備が必要です。</b>自動保存を使わないなら、要りません。<br>
+    スクリプトの文: <a href="gas/tegaki.gs.txt">超！手書きの GAS</a>／作り方: <a href="manual/keys-gas/">Gemini の API キーと GAS の準備マニュアル</a>（4 章・5 章）<br>
+    Web 版で保存する PDF の名前に冒頭の文字を入れたいときだけ、Gemini の API キーも GAS に入れます（2 章）。</div>
     <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/keys-gas/">キーと GAS の準備</a>
       <a href="manual/ink-android/">Android 版のマニュアル</a>
       <a href="manual/ink-web/">Web 版のマニュアル</a>
       <a href="manual.html#ink">PDF はこちら</a></div>
@@ -165,7 +173,10 @@
           <div class="qrnote">Safari で開いて「ホーム画面に追加」すると、アプリのように使えます。</div></div>
       </div>
     </div>
+    <div class="warn"><b>Google ドライブへの自動保存を使うときは、GAS（Google Apps Script）の準備が必要です。</b>自動保存を使わないなら、要りません。<br>
+    スクリプトの文: <a href="gas/album.gs.txt">超！アルバムの GAS</a>／作り方: <a href="manual/keys-gas/">Gemini の API キーと GAS の準備マニュアル</a>（4 章・5 章）</div>
     <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/keys-gas/">キーと GAS の準備</a>
       <a href="manual/album-android/">Android 版のマニュアル</a>
       <a href="manual/album-web/">Web 版のマニュアル</a>
       <a href="manual.html#album">PDF はこちら</a></div>
@@ -197,7 +208,11 @@
           <div class="qrnote">はじめに、準備した人から教えてもらう URL と合言葉を入れます（マニュアルの 2 章）。</div></div>
       </div>
     </div>
+    <div class="warn"><b>このアプリには Gemini の API キー（無料）が必要です。</b>作り方: <a href="manual/keys-gas/">Gemini の API キーと GAS の準備マニュアル</a>（2 章）<br>
+    Android 版: キーをアプリに入れます。写真の字を読むだけならキーは要りません。AI で発売日を調べるときに使います。<br>
+    Web 版: さらに <b>GAS の準備も必要です</b>。キーは GAS に入れます。スクリプトの文: <a href="gas/kaden.gs.txt">家電チェッカーの GAS</a>（作り方は同じマニュアルの 4 章・5 章）</div>
     <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/keys-gas/">キーと GAS の準備</a>
       <a href="manual/kaden-android/">Android 版のマニュアル</a>
       <a href="manual/kaden-web/">Web 版のマニュアル</a>
       <a href="manual.html#kaden">PDF はこちら</a></div>
@@ -222,8 +237,9 @@
         <div class="qrnote" style="margin-top:10px">ダブルクリックして「インストール」を押すだけです。管理者の許可はいりません。アンインストールもできます。<br>超！画面翻訳_セットアップ_v3.exe（約 0.6MB）<br>Windows 10 / 11 用。</div>
       </div>
     </div>
-    <div class="warn">翻訳には Gemini の API キー（無料）が要ります。作り方はマニュアルの 5 章にあります。<br>囲んだ部分は画像のまま Google に送られます。パスワードや個人情報が映っている部分は囲まないでください。</div>
+    <div class="warn"><b>このアプリには Gemini の API キー（無料）が必要です。</b>作り方: <a href="manual/keys-gas/">Gemini の API キーと GAS の準備マニュアル</a>（2 章）<br>囲んだ部分は画像のまま Google に送られます。パスワードや個人情報が映っている部分は囲まないでください。</div>
     <div class="mans"><span class="k">MANUAL</span>
+      <a href="manual/keys-gas/">キーと GAS の準備</a>
       <a href="manual/honyaku-windows/">Windows 版のマニュアル</a>
       <a href="manual/honyaku-download/">ダウンロード時に警告が出たとき</a></div>
   </article>
@@ -287,7 +303,7 @@
 <section id="manual">
   <h2 class="sec"><span class="en">MANUAL</span><span class="ja">使い方マニュアル</span></h2>
   <div class="card">
-    <p style="margin-top:0">12 冊のマニュアル（5 つのアプリ × Android 版・Web 版、超！画面翻訳、APK の入れ方）があります。<br>
+    <p style="margin-top:0">13 冊のマニュアル（5 つのアプリ × Android 版・Web 版、超！画面翻訳、APK の入れ方、Gemini の API キーと GAS の準備）があります。<br>
     <b>VIEW</b> はダウンロードせずにこの場で読む（HTML）、<b>PDF</b> はファイルでダウンロードして保存・印刷できます（超！画面翻訳の PDF は、インストールすると本体と一緒に入ります）。</p>
     <a class="btn" href="manual.html">ENTER <small>マニュアルの一覧へ</small></a>
   </div>
