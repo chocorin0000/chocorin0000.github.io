@@ -1,0 +1,50 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>超！画面翻訳 ダウンロード時に警告が出たとき</title><style>
+body { font-family: "Yu Gothic UI", "Meiryo", "Hiragino Sans", sans-serif; font-size: 16px; line-height: 1.7; color: #222; max-width: 760px; margin: 0 auto; padding: 16px; background: #fff; }
+h1 { font-size: 24px; line-height: 1.35; border-bottom: 3px solid #2E3A46; padding-bottom: 6px; margin: 0 0 12px; }
+h2 { font-size: 18px; background: #2E3A46; color: #fff; padding: 5px 10px; margin: 26px 0 10px; }
+img { border: 1px solid #bbb; max-width: 100%; height: auto; }
+.fig { text-align: center; font-size: 13px; color: #555; margin: 12px 0 18px; }
+.fig img { display: block; margin: 0 auto 4px; }
+.note { margin: 12px 0; padding: 9px 13px; background: #e8f4ff; border: 1px solid #8fb8e0; border-radius: 6px; }
+.warn { margin: 12px 0; padding: 9px 13px; background: #fff0f0; border: 1px solid #e0a0a0; border-radius: 6px; }
+code { background: #f1f3f5; padding: 1px 4px; font-family: Consolas, "MS Gothic", monospace; word-break: break-all; }
+a { color: #1d5a96; }
+ul { padding-left: 1.5em; }
+</style></head><body>
+<h1>超！画面翻訳<br>ダウンロード時に警告が出たとき</h1>
+<p>超！画面翻訳をホームページからダウンロードして入れるとき、<strong>ブラウザーと Windows の警告が 1 回ずつ</strong>出ることがあります。次の手順で進めると、インストールできます。</p>
+<div class="note">画面は、Windows 11 と Google Chrome で 2026-11-06 に撮ったものです。ほかのブラウザーや、パソコンの状態によって、出方や言葉が変わることがあります。</div>
+
+<h2>なぜ警告が出るのか</h2>
+<ul>
+<li>超！画面翻訳は個人で作ったソフトで、ダウンロードされた回数がまだ少なく、発行元を証明する電子署名も付けていません。</li>
+<li>そのため、ブラウザーや Windows には「よく知られていないソフト」に見え、「不明な発行元」と表示されます。</li>
+</ul>
+<div class="warn"><strong>警告を飛ばしてよいのは、ファイルの出どころを信頼できるときだけです。</strong>下の手順は、<a href="https://chocorin0000.github.io/">超 APPLICATION</a> からダウンロードした <code>超！画面翻訳_セットアップ_v3.exe</code> のためのものです。ほかのサイトのファイルや、名前の違うファイルでは、同じ操作をしないでください。</div>
+
+<h2>1. ブラウザーの警告（Chrome）</h2>
+<p>ダウンロードすると、画面の右上に<strong>「不審なダウンロードをブロックしました」</strong>と出ます。この時点では、まだ保存されていません。</p>
+<p><strong>① この表示を押します。</strong>消えてしまったときは、Chrome の右上のダウンロードのアイコン（↓）を押します。</p>
+<div class="fig"><img src="画像/1_ブロックの表示.png" width="322" alt="「不審なダウンロードをブロックしました」の表示"><br>「不審なダウンロードをブロックしました」の表示</div>
+<p><strong>② 「不審なファイルをダウンロード」を押します。</strong>これで保存されます。</p>
+<div class="fig"><img src="画像/2_ダウンロードの確認.png" width="449" alt="「履歴から削除」ではなく「不審なファイルをダウンロード」を押す"><br>「履歴から削除」ではなく「不審なファイルをダウンロード」を押す</div>
+
+<h2>2. Windows の警告</h2>
+<p><strong>③ ダウンロードしたファイルを開きます。</strong>Chrome のダウンロードの一覧から開くか、「ダウンロード」フォルダーの <code>超！画面翻訳_セットアップ_v3.exe</code> をダブルクリックします。</p>
+<p>青い画面に<strong>「Windows によって PC が保護されました」</strong>と出たら、<strong>④「詳細情報」を押します。</strong></p>
+<div class="fig"><img src="画像/3_PCが保護されました.png" width="534" alt="最初は「実行しない」しかないので、「詳細情報」を押す"><br>最初は「実行しない」しかないので、「詳細情報」を押す</div>
+<p><strong>⑤ アプリの名前が <code>超！画面翻訳_セットアップ_v3.exe</code> であることを確かめて、「実行」を押します。</strong></p>
+<div class="fig"><img src="画像/4_実行のボタン.png" width="531" alt="「実行」のボタンが出る"><br>「実行」のボタンが出る</div>
+<p>超！画面翻訳のセットアップの窓が開きます。<strong>「インストール」</strong>を押すと入ります。</p>
+
+<h2>ファイルが本物か確かめたいとき</h2>
+<p>必須ではありません。「ダウンロード」フォルダーで PowerShell を開き、次の命令を実行します。</p>
+<p><code>Get-FileHash .\超！画面翻訳_セットアップ_v3.exe</code></p>
+<p>出てきた Hash が次の値と同じなら、公開しているものと同じファイルです（大文字と小文字の違いは同じとみなします）。</p>
+<p><code>a9c702da22b49d5f683f09b94d678f8679957ee051c7303ed904502e9fe7b123</code></p>
+<p>この値は v3 のものです。</p>
+
+<h2>インストールしたあとは</h2>
+<p>使い方は<a href="../honyaku-windows/">超！画面翻訳のマニュアル</a>を見てください。</p>
+<p><a href="../../#honyaku">ホームページの超！画面翻訳に戻る</a></p>
+</body></html>
