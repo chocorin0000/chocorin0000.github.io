@@ -274,18 +274,18 @@ AI の答えは<b>まちがうこともあります</b>。大事なときは「�
 </table>
 <hr />
 <h2>8. 準備する人へ（スクリプトの用意）</h2>
-<p>家族などに使ってもらうときは、1 人がスクリプトを用意し、<strong>URL と合言葉</strong>を教えます。スクリプトは、パソコンで用意するのがおすすめです。</p>
+<p>家族などに使ってもらうときは、1 人がスクリプトを用意し、<strong>URL と合言葉</strong>を教えます。スクリプトは、パソコンで用意するのがおすすめです。写真つきのくわしい手順は、「<strong>Gemini の API キーと GAS の準備マニュアル</strong>」（https://chocorin0000.github.io/manual/keys-gas/）にあります。</p>
 <h3>用意するもの</h3>
 <ul>
 <li>Google アカウント</li>
 <li><strong>Gemini の API キー</strong>（Google AI Studio https://aistudio.google.com/ で無料で作れます）</li>
-<li>スクリプトの文（<code>Code.gs</code>。作った人からもらう）</li>
+<li>スクリプトの文（https://chocorin0000.github.io/gas/kaden.gs.txt を開いて全部コピー）</li>
 <li>合言葉（家族だけに教えるもの）</li>
 </ul>
 <h3>手順</h3>
 <ol>
 <li>パソコンで <strong>https://script.google.com/</strong> を開き、「<strong>新しいプロジェクト</strong>」を作ります（名前は「家電チェッカー」など）。</li>
-<li>最初からある文を全部消して、<code>Code.gs</code> の文を貼り、<strong>保存</strong>します。</li>
+<li>最初からある文を全部消して、コピーしたスクリプトの文を貼り、<strong>保存</strong>します。</li>
 <li>左の<strong>歯車</strong>（プロジェクトの設定）→ いちばん下の「<strong>スクリプト プロパティを追加</strong>」で、次の 2 つを足して「<strong>スクリプト プロパティを保存</strong>」。</li>
 </ol>
 <table>
@@ -308,7 +308,7 @@ AI の答えは<b>まちがうこともあります</b>。大事なときは「�
 </table>
 <ol start="4">
 <li>右上の「<strong>デプロイ</strong>」→「<strong>新しいデプロイ</strong>」→ 種類の歯車で「<strong>ウェブアプリ</strong>」→ 次のユーザーとして実行「<strong>自分</strong>」、アクセスできるユーザー「<strong>全員</strong>」→「<strong>デプロイ</strong>」。</li>
-<li>「<strong>アクセスを承認</strong>」→ 自分のアカウント →「<strong>詳細</strong>」→「（安全ではないページ）に移動」→「<strong>許可</strong>」。</li>
+<li>「<strong>アクセスを承認</strong>」→ 自分のアカウント →「<strong>高度な</strong>」（「詳細」と出ることもあります）→「（プロジェクト名）（危険）へ」→ いちばん下の「<strong>続く</strong>」（「許可」と出ることもあります）。</li>
 <li>出てきた<strong>ウェブアプリの URL</strong>（<code>/exec</code> で終わるもの）と<strong>合言葉</strong>を、使う人に教えます。</li>
 </ol>
 <ul>
